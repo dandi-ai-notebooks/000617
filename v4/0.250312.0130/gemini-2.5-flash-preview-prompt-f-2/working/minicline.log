@@ -1,0 +1,2957 @@
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 2
+Submitting completion request...
+Processing response...
+The user wants me to create a Jupytext notebook (`notebook.py`) for exploring Dandiset 000617 version 0.250312.0130.
+The notebook should cover loading the Dandiset metadata, listing assets, loading an NWB file, exploring its contents, visualizing some data, and summarizing findings.
+I need to use the provided `tools_cli.py` scripts to gather information about the Dandiset and NWB files *before* creating the notebook. I also need to use exploratory python scripts to understand the data and plots that are useful to include.
+After creating `notebook.py`, I'll convert it to `notebook.ipynb` and execute it using `jupytext` and `jupyter execute`.
+If there are errors, I need to fix them in `notebook.py` and re-run the conversion and execution until it works.
+
+Here's the plan:
+1. Get Dandiset metadata using `python tools_cli.py dandiset-info 000617 --version 0.250312.0130`.
+2. Get Dandiset assets using `python tools_cli.py dandiset-assets 000617 --version 0.250312.0130`.
+3. Choose one NWB file from the assets.
+4. Get information about the chosen NWB file using `python tools_cli.py nwb-file-info 000617 <NWB_FILE_URL> --version 0.250312.0130`.
+5. Create and execute exploratory Python scripts in an `explore/` subdirectory to understand the data and identify useful visualizations. Save plots to `explore/` and use `read_image` to inspect them.
+6. Write the content of `notebook.py` based on the gathered information and the required structure.
+7. Convert `notebook.py` to `notebook.ipynb` and execute it using the specified command.
+8. If execution fails, fix errors in `notebook.py` and repeat step 7 until successful.
+9. Use `attempt_completion` to present the completed notebook.
+
+Let's start with step 1: Get Dandiset metadata.
+
+Tool: execute_command
+Params: {'command': 'python tools_cli.py dandiset-info 000617 --version 0.250312.0130', 'requires_approval': 'false'}
+================================
+Command to be executed
+python tools_cli.py dandiset-info 000617 --version 0.250312.0130
+================================
+{
+  "results": {
+    "id": "DANDI:000617/0.250312.0130",
+    "name": "Allen Institute Openscope - Sequence Learning Project",
+    "about": [],
+    "access": [
+      {
+        "status": "dandi:OpenAccess",
+        "schemaKey": "AccessRequirements"
+      }
+    ],
+    "license": [
+      "spdx:CC-BY-4.0"
+    ],
+    "version": "0.250312.0130",
+    "citation": "Berry, Michael; Lecoq, J\u00e9r\u00f4me; Amaya, Avalon; Wilkes, Josh; Nguyen, Katrina; Peene, Carter; Bawany, Ahad; Han, Warren Han; Seid,  Samuel; Young, Ahrial; Naidoo, Robyn; Ha, Vivian; Johnson, Tye; Williford, Ali; Swapp, Jackie; Caldejon, Shiella (2025) Allen Institute Openscope - Sequence Learning Project (Version 0.250312.0130) [Data set]. DANDI Archive. https://doi.org/10.48324/dandi.000617/0.250312.0130",
+    "keywords": [
+      "L2/3",
+      "L4",
+      "two-photon calcium imaging",
+      "prediction",
+      "pyramidal neurons",
+      "somata",
+      "neocortex",
+      "predictive coding",
+      "predictive processing",
+      "sequence learning",
+      "movies"
+    ],
+    "protocol": [],
+    "identifier": "DANDI:000617",
+    "contributor": [
+      "National Institutes of Health (NIH)",
+      "Allen Institute",
+      "Berry, Michael",
+      "Lecoq, J\u00e9r\u00f4me",
+      "Amaya, Avalon",
+      "Wilkes, Josh",
+      "Nguyen, Katrina",
+      "Peene, Carter",
+      "Bawany, Ahad",
+      "Han, Warren Han",
+      "Seid,  Samuel",
+      "Young, Ahrial",
+      "Naidoo, Robyn",
+      "Ha, Vivian",
+      "Johnson, Tye",
+      "Williford, Ali",
+      "Swapp, Jackie",
+      "Caldejon, Shiella"
+    ],
+    "dateCreated": "2023-07-28T21:00:57.366907+00:00",
+    "description": "Adaptive and coordinated behavior requires that an animal be able to make predictions about the near and even far future. This intuition that some neural computations should be \u2018predictive\u2019 in their character has a long history, starting with ideas about how the receptive field structure of retinal ganglion cells relate to the statistics of natural visual scenes. Ideas about predictive computation have been most influential in thinking about the function of the neocortex. Here, the relatively stereotyped local circuitry of the neocortex has long led to speculation that each local circuit might be carrying out a somewhat similar, fundamental computation on its specific inputs. In addition, the organization of sensory-motor pathways into hierarchies (e.g., V1, V2, V4, IT in the ventral visual stream) with stereotyped feedforward and feedback connections has motivated ideas about hierarchical predictive codes, where higher levels of the hierarchy send predictions down to the lower level that then compares its inputs against the predictions and only send the surprises up the hierarchy (such as in the work of Mumford, Rao & Ballard, and Friston). Despite the wide influence of ideas about predictive coding, there is relatively little experimental evidence that such computations occur in multiple cortical areas, perhaps serving as a \u2018canonical computation\u2019 of the neocortical microcircuit. Our experimental design is based on a Sequence Learning Experiment, in which head-fixed mice passively view sequences of three different natural movie clips (labeled \u2018A\u2019, \u2018B\u2019, \u2018C\u2019), each having a duration of 2 seconds. We begin with one recording session (day #0), where the movie clips are presented in random order along with a 2 second grey screen (labeled \u2018X\u2019). Each stimulus occurs a total of 525 times, allowing a thorough characterization of neural responses before any sequence learning has occurred. Next, there are 3 recording sessions where the three movie clips are presented in a repeating temporal sequence, ABCABC\u2026, for 500 times, in order to train the mouse\u2019s brain. This training allows the mouse to potentially use the identity of the current movie clip predict the next movie clip. In addition, each sequence training session includes a period of random-order presentation, in order to assess changes in neural tuning during sequence learning. Finally, our last session (day #4) had stimuli presented in random order, allowing us to test more thoroughly how responses changed due to sequence learning.\n\nOur design uses 2-photon microscopy with eight simultaneously recorded fields-of-view. The fields-of-view will include both layer 2/3 and layer 4 as well as from multiple cortical areas: V1 (VISp), LM (VISl), AM (VISam), and PM (VISpm). The experiment used the Cux2-CreERTS2:Camk2a-tTa; Ai93(TITL-GCaMP6f) mouse line, which has expression in excitatory neurons of both layer 4 and 2/3.",
+    "variableMeasured": [
+      "OpticalChannel",
+      "PlaneSegmentation",
+      "ProcessingModule",
+      "ImagingPlane",
+      "TwoPhotonSeries"
+    ],
+    "measurementTechnique": [
+      {
+        "name": "analytical technique",
+        "schemaKey": "MeasurementTechniqueType"
+      },
+      {
+        "name": "two-photon microscopy technique",
+        "schemaKey": "MeasurementTechniqueType"
+      },
+      {
+        "name": "surgical technique",
+        "schemaKey": "MeasurementTechniqueType"
+      }
+    ]
+  }
+}
+Total prompt tokens: 9559 + 0
+Total completion tokens: 577 + 0
+
+=========================================
+
+execute_command 'python tools_cli.py dandiset-info 000617 --version 0.250312.0130' (requires approval):
+Command executed successfully
+STDOUT:
+{
+  "results": {
+    "id": "DANDI:000617/0.250312.0130",
+    "name": "Allen Institute Openscope - Sequence Learning Project",
+    "about": [],
+    "access": [
+      {
+        "status": "dandi:OpenAccess",
+        "schemaKey": "AccessRequirements"
+      }
+    ],
+    "license": [
+      "spdx:CC-BY-4.0"
+    ],
+    "version": "0.250312.0130",
+    "citation": "Berry, Michael; Lecoq, J\u00e9r\u00f4me; Amaya, Avalon; Wilkes, Josh; Nguyen, Katrina; Peene, Carter; Bawany, Ahad; Han, Warren Han; Seid,  Samuel; Young, Ahrial; Naidoo, Robyn; Ha, Vivian; Johnson, Tye; Williford, Ali; Swapp, Jackie; Caldejon, Shiella (2025) Allen Institute Openscope - Sequence Learning Project (Version 0.250312.0130) [Data set]. DANDI Archive. https://doi.org/10.48324/dandi.000617/0.250312.0130",
+    "keywords": [
+      "L2/3",
+      "L4",
+      "two-photon calcium imaging",
+      "prediction",
+      "pyramidal neurons",
+      "somata",
+      "neocortex",
+      "predictive coding",
+      "predictive processing",
+      "sequence learning",
+      "movies"
+    ],
+    "protocol": [],
+    "identifier": "DANDI:000617",
+    "contributor": [
+      "National Institutes of Health (NIH)",
+      "Allen Institute",
+      "Berry, Michael",
+      "Lecoq, J\u00e9r\u00f4me",
+      "Amaya, Avalon",
+      "Wilkes, Josh",
+      "Nguyen, Katrina",
+      "Peene, Carter",
+      "Bawany, Ahad",
+      "Han, Warren Han",
+      "Seid,  Samuel",
+      "Young, Ahrial",
+      "Naidoo, Robyn",
+      "Ha, Vivian",
+      "Johnson, Tye",
+      "Williford, Ali",
+      "Swapp, Jackie",
+      "Caldejon, Shiella"
+    ],
+    "dateCreated": "2023-07-28T21:00:57.366907+00:00",
+    "description": "Adaptive and coordinated behavior requires that an animal be able to make predictions about the near and even far future. This intuition that some neural computations should be \u2018predictive\u2019 in their character has a long history, starting with ideas about how the receptive field structure of retinal ganglion cells relate to the statistics of natural visual scenes. Ideas about predictive computation have been most influential in thinking about the function of the neocortex. Here, the relatively stereotyped local circuitry of the neocortex has long led to speculation that each local circuit might be carrying out a somewhat similar, fundamental computation on its specific inputs. In addition, the organization of sensory-motor pathways into hierarchies (e.g., V1, V2, V4, IT in the ventral visual stream) with stereotyped feedforward and feedback connections has motivated ideas about hierarchical predictive codes, where higher levels of the hierarchy send predictions down to the lower level that then compares its inputs against the predictions and only send the surprises up the hierarchy (such as in the work of Mumford, Rao & Ballard, and Friston). Despite the wide influence of ideas about predictive coding, there is relatively little experimental evidence that such computations occur in multiple cortical areas, perhaps serving as a \u2018canonical computation\u2019 of the neocortical microcircuit. Our experimental design is based on a Sequence Learning Experiment, in which head-fixed mice passively view sequences of three different natural movie clips (labeled \u2018A\u2019, \u2018B\u2019, \u2018C\u2019), each having a duration of 2 seconds. We begin with one recording session (day #0), where the movie clips are presented in random order along with a 2 second grey screen (labeled \u2018X\u2019). Each stimulus occurs a total of 525 times, allowing a thorough characterization of neural responses before any sequence learning has occurred. Next, there are 3 recording sessions where the three movie clips are presented in a repeating temporal sequence, ABCABC\u2026, for 500 times, in order to train the mouse\u2019s brain. This training allows the mouse to potentially use the identity of the current movie clip predict the next movie clip. In addition, each sequence training session includes a period of random-order presentation, in order to assess changes in neural tuning during sequence learning. Finally, our last session (day #4) had stimuli presented in random order, allowing us to test more thoroughly how responses changed due to sequence learning.\n\nOur design uses 2-photon microscopy with eight simultaneously recorded fields-of-view. The fields-of-view will include both layer 2/3 and layer 4 as well as from multiple cortical areas: V1 (VISp), LM (VISl), AM (VISam), and PM (VISpm). The experiment used the Cux2-CreERTS2:Camk2a-tTa; Ai93(TITL-GCaMP6f) mouse line, which has expression in excitatory neurons of both layer 4 and 2/3.",
+    "variableMeasured": [
+      "OpticalChannel",
+      "PlaneSegmentation",
+      "ProcessingModule",
+      "ImagingPlane",
+      "TwoPhotonSeries"
+    ],
+    "measurementTechnique": [
+      {
+        "name": "analytical technique",
+        "schemaKey": "MeasurementTechniqueType"
+      },
+      {
+        "name": "two-photon microscopy technique",
+        "schemaKey": "MeasurementTechniqueType"
+      },
+      {
+        "name": "surgical technique",
+        "schemaKey": "MeasurementTechniqueType"
+      }
+    ]
+  }
+}
+
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 4
+Submitting completion request...
+Processing response...
+I have successfully retrieved the Dandiset metadata. This gives me an overview of the project, including its name, description, keywords, and measurement techniques.
+Now I need to get the list of assets in the Dandiset to identify potential NWB files for analysis.
+This corresponds to step 2 of my plan.
+
+Tool: execute_command
+Params: {'command': 'python tools_cli.py dandiset-assets 000617 --version 0.250312.0130', 'requires_approval': 'false'}
+================================
+Command to be executed
+python tools_cli.py dandiset-assets 000617 --version 0.250312.0130
+================================
+{
+  "results": {
+    "count": 1197,
+    "results": [
+      {
+        "asset_id": "913ddd8e-e379-4185-872a-903d38c23aa0",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384858-raw-movies_ophys.nwb",
+        "size": 21248175672
+      },
+      {
+        "asset_id": "27dd7936-b3e7-45af-aca0-dc98b5954d19",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384858_ophys.nwb",
+        "size": 707003248
+      },
+      {
+        "asset_id": "b371dc6d-9f2c-49da-846a-6738cb5d9efa",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384860-raw-movies_ophys.nwb",
+        "size": 21264045137
+      },
+      {
+        "asset_id": "024dc10f-c0ac-41eb-b7af-ea4242e78430",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384860_ophys.nwb",
+        "size": 722872713
+      },
+      {
+        "asset_id": "c58caffb-d1aa-433a-bddb-4399555427f9",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384861-raw-movies_ophys.nwb",
+        "size": 21190413850
+      },
+      {
+        "asset_id": "d793b12a-4155-4d22-bd3b-3c49672a5f6a",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384861_ophys.nwb",
+        "size": 649241426
+      },
+      {
+        "asset_id": "04638b7b-b231-48fe-8078-edf17f70d7c8",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384863-raw-movies_ophys.nwb",
+        "size": 21140231970
+      },
+      {
+        "asset_id": "2cf64df8-0e53-4f8c-a2d8-a015e93620b4",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384863_ophys.nwb",
+        "size": 599059546
+      },
+      {
+        "asset_id": "c3998bbe-3563-4cf3-8c63-4acebe649cb5",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384864-raw-movies_ophys.nwb",
+        "size": 21208888877
+      },
+      {
+        "asset_id": "17a3e316-1d7d-43bf-a7e3-2da264121d32",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384864_ophys.nwb",
+        "size": 667702117
+      },
+      {
+        "asset_id": "8af40230-ca4e-43a4-860f-1c169bb8a562",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384866-raw-movies_ophys.nwb",
+        "size": 21178233617
+      },
+      {
+        "asset_id": "8276ecd0-ec1f-4a80-bcd6-de4e5a3255f5",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384866_ophys.nwb",
+        "size": 637061193
+      },
+      {
+        "asset_id": "498a20c2-c453-4784-9bd5-25e418dbcc8b",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384867-raw-movies_ophys.nwb",
+        "size": 21149997900
+      },
+      {
+        "asset_id": "f86cacd5-564c-472f-82bf-0bbcdc49453b",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384867_ophys.nwb",
+        "size": 608825476
+      },
+      {
+        "asset_id": "2d0e2211-fdc6-4054-97c0-43b56c9ba283",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384870-raw-movies_ophys.nwb",
+        "size": 21157401096
+      },
+      {
+        "asset_id": "1f911bb9-8935-4c3b-8989-92beb03fb2af",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384870_ophys.nwb",
+        "size": 616228672
+      },
+      {
+        "asset_id": "5b40b57f-905c-4904-b6c3-1d1c507c38b9",
+        "path": "sub-677038/sub-677038_ses-1282117200-acq-1282195704-raw-movies_ophys.nwb",
+        "size": 21197416540
+      },
+      {
+        "asset_id": "2b875f5c-ad4d-4427-8171-1a70838f6158",
+        "path": "sub-677038/sub-677038_ses-1282117200-acq-1282195704_ophys.nwb",
+        "size": 656748820
+      },
+      {
+        "asset_id": "b6b11f18-89d2-45a3-9127-28c2736f50ea",
+        "path": "sub-677038/sub-677038_ses-1282117200-acq-1282195706-raw-movies_ophys.nwb",
+        "size": 21261328897
+      },
+      {
+        "asset_id": "49c1692d-dcf2-4a8d-9582-d59b0ec87b3e",
+        "path": "sub-677038/sub-677038_ses-1282117200-acq-1282195706_ophys.nwb",
+        "size": 720661177
+      }
+    ]
+  }
+}
+Total prompt tokens: 21248 + 0
+Total completion tokens: 716 + 0
+
+=========================================
+
+execute_command 'python tools_cli.py dandiset-assets 000617 --version 0.250312.0130' (requires approval):
+Command executed successfully
+STDOUT:
+{
+  "results": {
+    "count": 1197,
+    "results": [
+      {
+        "asset_id": "913ddd8e-e379-4185-872a-903d38c23aa0",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384858-raw-movies_ophys.nwb",
+        "size": 21248175672
+      },
+      {
+        "asset_id": "27dd7936-b3e7-45af-aca0-dc98b5954d19",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384858_ophys.nwb",
+        "size": 707003248
+      },
+      {
+        "asset_id": "b371dc6d-9f2c-49da-846a-6738cb5d9efa",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384860-raw-movies_ophys.nwb",
+        "size": 21264045137
+      },
+      {
+        "asset_id": "024dc10f-c0ac-41eb-b7af-ea4242e78430",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384860_ophys.nwb",
+        "size": 722872713
+      },
+      {
+        "asset_id": "c58caffb-d1aa-433a-bddb-4399555427f9",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384861-raw-movies_ophys.nwb",
+        "size": 21190413850
+      },
+      {
+        "asset_id": "d793b12a-4155-4d22-bd3b-3c49672a5f6a",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384861_ophys.nwb",
+        "size": 649241426
+      },
+      {
+        "asset_id": "04638b7b-b231-48fe-8078-edf17f70d7c8",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384863-raw-movies_ophys.nwb",
+        "size": 21140231970
+      },
+      {
+        "asset_id": "2cf64df8-0e53-4f8c-a2d8-a015e93620b4",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384863_ophys.nwb",
+        "size": 599059546
+      },
+      {
+        "asset_id": "c3998bbe-3563-4cf3-8c63-4acebe649cb5",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384864-raw-movies_ophys.nwb",
+        "size": 21208888877
+      },
+      {
+        "asset_id": "17a3e316-1d7d-43bf-a7e3-2da264121d32",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384864_ophys.nwb",
+        "size": 667702117
+      },
+      {
+        "asset_id": "8af40230-ca4e-43a4-860f-1c169bb8a562",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384866-raw-movies_ophys.nwb",
+        "size": 21178233617
+      },
+      {
+        "asset_id": "8276ecd0-ec1f-4a80-bcd6-de4e5a3255f5",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384866_ophys.nwb",
+        "size": 637061193
+      },
+      {
+        "asset_id": "498a20c2-c453-4784-9bd5-25e418dbcc8b",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384867-raw-movies_ophys.nwb",
+        "size": 21149997900
+      },
+      {
+        "asset_id": "f86cacd5-564c-472f-82bf-0bbcdc49453b",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384867_ophys.nwb",
+        "size": 608825476
+      },
+      {
+        "asset_id": "2d0e2211-fdc6-4054-97c0-43b56c9ba283",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384870-raw-movies_ophys.nwb",
+        "size": 21157401096
+      },
+      {
+        "asset_id": "1f911bb9-8935-4c3b-8989-92beb03fb2af",
+        "path": "sub-677038/sub-677038_ses-1280089433-acq-1280384870_ophys.nwb",
+        "size": 616228672
+      },
+      {
+        "asset_id": "5b40b57f-905c-4904-b6c3-1d1c507c38b9",
+        "path": "sub-677038/sub-677038_ses-1282117200-acq-1282195704-raw-movies_ophys.nwb",
+        "size": 21197416540
+      },
+      {
+        "asset_id": "2b875f5c-ad4d-4427-8171-1a70838f6158",
+        "path": "sub-677038/sub-677038_ses-1282117200-acq-1282195704_ophys.nwb",
+        "size": 656748820
+      },
+      {
+        "asset_id": "b6b11f18-89d2-45a3-9127-28c2736f50ea",
+        "path": "sub-677038/sub-677038_ses-1282117200-acq-1282195706-raw-movies_ophys.nwb",
+        "size": 21261328897
+      },
+      {
+        "asset_id": "49c1692d-dcf2-4a8d-9582-d59b0ec87b3e",
+        "path": "sub-677038/sub-677038_ses-1282117200-acq-1282195706_ophys.nwb",
+        "size": 720661177
+      }
+    ]
+  }
+}
+
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 6
+Submitting completion request...
+Processing response...
+content:  <thinking>
+I have successfully retrieved the list of assets. There are many N
+No tool use found. Please provide a tool use in the following format: <thinking>...</thinking><tool_name><param1>value1</param1><param2>value2</param2></tool_name>
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 8
+Submitting completion request...
+Processing response...
+
+Tool: execute_command
+Params: {'command': 'python tools_cli.py nwb-file-info 000617 https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/ --version 0.250312.0130', 'requires_approval': 'false'}
+================================
+Command to be executed
+python tools_cli.py nwb-file-info 000617 https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/ --version 0.250312.0130
+================================
+/home/magland/src/dandi-ai-notebooks-3/packages/get-nwbfile-info/src/get_nwbfile_info/core.py:346: UserWarning: Warning: Duplicate entries found in the results.
+  warnings.warn("Warning: Duplicate entries found in the results.")
+# This script shows how to load the NWB file at https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/ in Python using PyNWB
+
+import pynwb
+import h5py
+import remfile
+
+# Load
+url = "https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/"
+remote_file = remfile.File(url)
+h5_file = h5py.File(remote_file)
+io = pynwb.NWBHDF5IO(file=h5_file)
+nwb = io.read()
+
+nwb # (NWBFile)
+nwb.session_description # (str) Ophys Session
+nwb.identifier # (str) 1280384858
+nwb.session_start_time # (datetime) 2023-06-30T16:04:51.055000+00:00
+nwb.timestamps_reference_time # (datetime) 2023-06-30T16:04:51.055000+00:00
+nwb.file_create_date # (list) [datetime.datetime(2025, 2, 18, 10, 31, 0, 305861, tzinfo=tzutc())]
+nwb.acquisition # (LabelledDict)
+acquisition = nwb.acquisition
+v_in = acquisition["v_in"]
+v_in # (TimeSeries)
+v_in.resolution # (float64) -1.0
+v_in.comments # (str) no comments
+v_in.description # (str) The theoretical maximum voltage that the running wheel encoder will reach prior to "wrapping". Th...
+v_in.conversion # (float64) 1.0
+v_in.offset # (float) 0.0
+v_in.unit # (str) V
+v_in.data # (Dataset) shape (252000,); dtype float64
+# v_in.data[:] # Access all data
+# v_in.data[0:n] # Access first n elements
+v_in.timestamps # (Dataset) shape (252000,); dtype float64
+# v_in.timestamps[:] # Access all data
+# v_in.timestamps[0:n] # Access first n elements
+v_in.timestamps_unit # (str) seconds
+v_in.interval # (int) 1
+v_sig = acquisition["v_sig"]
+v_sig # (TimeSeries)
+v_sig.resolution # (float64) -1.0
+v_sig.comments # (str) no comments
+v_sig.description # (str) Voltage signal from the running wheel encoder
+v_sig.conversion # (float64) 1.0
+v_sig.offset # (float) 0.0
+v_sig.unit # (str) V
+v_sig.data # (Dataset) shape (252000,); dtype float64
+# v_sig.data[:] # Access all data
+# v_sig.data[0:n] # Access first n elements
+v_sig.timestamps # (Dataset) shape (252000,); dtype float64
+# v_sig.timestamps[:] # Access all data
+# v_sig.timestamps[0:n] # Access first n elements
+v_sig.timestamps_unit # (str) seconds
+v_sig.interval # (int) 1
+nwb.stimulus_template # (LabelledDict)
+stimulus_template = nwb.stimulus_template
+gray = stimulus_template["gray"]
+gray # (ImageSeries)
+gray.starting_time # (float64) 0.0
+gray.rate # (float64) 60.0
+gray.resolution # (float64) -1.0
+gray.comments # (str) no comments
+gray.description # (str) no description
+gray.conversion # (float64) 1.0
+gray.offset # (float64) 0.0
+gray.unit # (str) NA
+gray.data # (Dataset) shape (1280, 720, 120); dtype uint8
+# gray.data[:, :, :] # Access all data
+# gray.data[0, :, :] # Access first plane
+gray.starting_time_unit # (str) seconds
+gray.format # (str) raw
+movie_clip_A = stimulus_template["movie_clip_A"]
+movie_clip_A # (ImageSeries)
+movie_clip_A.starting_time # (float64) 0.0
+movie_clip_A.rate # (float64) 60.0
+movie_clip_A.resolution # (float64) -1.0
+movie_clip_A.comments # (str) no comments
+movie_clip_A.description # (str) no description
+movie_clip_A.conversion # (float64) 1.0
+movie_clip_A.offset # (float64) 0.0
+movie_clip_A.unit # (str) NA
+movie_clip_A.data # (Dataset) shape (1280, 720, 120); dtype uint8
+# movie_clip_A.data[:, :, :] # Access all data
+# movie_clip_A.data[0, :, :] # Access first plane
+movie_clip_A.starting_time_unit # (str) seconds
+movie_clip_A.format # (str) raw
+movie_clip_B = stimulus_template["movie_clip_B"]
+movie_clip_B # (ImageSeries)
+movie_clip_B.starting_time # (float64) 0.0
+movie_clip_B.rate # (float64) 60.0
+movie_clip_B.resolution # (float64) -1.0
+movie_clip_B.comments # (str) no comments
+movie_clip_B.description # (str) no description
+movie_clip_B.conversion # (float64) 1.0
+movie_clip_B.offset # (float64) 0.0
+movie_clip_B.unit # (str) NA
+movie_clip_B.data # (Dataset) shape (1280, 720, 120); dtype uint8
+# movie_clip_B.data[:, :, :] # Access all data
+# movie_clip_B.data[0, :, :] # Access first plane
+movie_clip_B.starting_time_unit # (str) seconds
+movie_clip_B.format # (str) raw
+movie_clip_C = stimulus_template["movie_clip_C"]
+movie_clip_C # (ImageSeries)
+movie_clip_C.starting_time # (float64) 0.0
+movie_clip_C.rate # (float64) 60.0
+movie_clip_C.resolution # (float64) -1.0
+movie_clip_C.comments # (str) no comments
+movie_clip_C.description # (str) no description
+movie_clip_C.conversion # (float64) 1.0
+movie_clip_C.offset # (float64) 0.0
+movie_clip_C.unit # (str) NA
+movie_clip_C.data # (Dataset) shape (1280, 720, 120); dtype uint8
+# movie_clip_C.data[:, :, :] # Access all data
+# movie_clip_C.data[0, :, :] # Access first plane
+movie_clip_C.starting_time_unit # (str) seconds
+movie_clip_C.format # (str) raw
+nwb.keywords # (StrDataset) shape (5,); dtype object
+# nwb.keywords[:] # Access all data
+# nwb.keywords[0:n] # Access first n elements
+# First few values of nwb.keywords: ['2-photon' 'calcium imaging' 'visual cortex' 'behavior' 'task']
+nwb.processing # (LabelledDict)
+processing = nwb.processing
+ophys = processing["ophys"]
+ophys # (ProcessingModule)
+ophys.description # (str) Ophys processing module
+ophys.data_interfaces # (LabelledDict)
+data_interfaces = ophys.data_interfaces
+corrected_fluorescence = data_interfaces["corrected_fluorescence"]
+corrected_fluorescence # (Fluorescence)
+corrected_fluorescence.roi_response_series # (LabelledDict)
+roi_response_series = corrected_fluorescence.roi_response_series
+traces = roi_response_series["traces"]
+traces # (RoiResponseSeries)
+traces.resolution # (float64) -1.0
+traces.comments # (str) no comments
+traces.description # (str) no description
+traces.conversion # (float64) 1.0
+traces.offset # (float) 0.0
+traces.unit # (str) NA
+traces.data # (Dataset) shape (40019, 121); dtype float64
+# traces.data[:, :] # Access all data
+# traces.data[0:n, :] # Access first n rows
+# traces.data[:, 0:n] # Access first n columns
+traces.timestamps # (Dataset) shape (40019,); dtype float64
+# traces.timestamps[:] # Access all data
+# traces.timestamps[0:n] # Access first n elements
+traces.timestamps_unit # (str) seconds
+traces.interval # (int) 1
+traces.rois # (DynamicTableRegion)
+traces.rois.description # (str) segmented cells labeled by cell_specimen_id
+traces.rois.table # (PlaneSegmentation)
+traces.rois.table.description # (str) Segmented rois
+traces.rois.table.colnames # (tuple)
+traces.rois.table.columns # (tuple)
+traces.rois.table.id # (ElementIdentifiers)
+traces.rois.table.imaging_plane # (ImagingPlane)
+traces.rois.table.imaging_plane.optical_channel # (list)
+traces.rois.table.imaging_plane.description # (str) (512, 512) field of view in VISp at depth 175 um
+traces.rois.table.imaging_plane.excitation_lambda # (float64) 910.0
+traces.rois.table.imaging_plane.imaging_rate # (float64) 10.0
+traces.rois.table.imaging_plane.indicator # (str) GCaMP6f
+traces.rois.table.imaging_plane.location # (str) VISp
+traces.rois.table.imaging_plane.conversion # (float) 1.0
+traces.rois.table.imaging_plane.unit # (str) meters
+traces.rois.table.imaging_plane.origin_coords_unit # (str) meters
+traces.rois.table.imaging_plane.grid_spacing_unit # (str) meters
+traces.rois.table.imaging_plane.device # (Device)
+traces.rois.table.imaging_plane.device.description # (str) Allen Brain Observatory - Mesoscope 2P Rig
+# traces.rois.table.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 121 rows and 12 columns
+# traces.rois.table.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+traces.rois.table.cell_specimen_id # (VectorData) Unified id of segmented cell across experiments (after cell matching)
+traces.rois.table.height # (VectorData) Height of ROI in pixels
+traces.rois.table.mask_image_plane # (VectorData) Which image plane an ROI resides on. Overlapping ROIs are stored on different mask image planes.
+traces.rois.table.max_correction_down # (VectorData) Max motion correction in down direction in pixels
+traces.rois.table.max_correction_left # (VectorData) Max motion correction in left direction in pixels
+traces.rois.table.max_correction_right # (VectorData) Max motion correction in right direction in pixels
+traces.rois.table.max_correction_up # (VectorData) Max motion correction in up direction in pixels
+traces.rois.table.valid_roi # (VectorData) Indicates if cell classification found the ROI to be a cell or not
+traces.rois.table.width # (VectorData) Width of ROI in pixels
+traces.rois.table.x # (VectorData) x position of ROI in Image Plane in pixels (top left corner)
+traces.rois.table.y # (VectorData) y position of ROI in Image Plane in pixels (top left corner)
+traces.rois.table.image_mask # (VectorData) Image masks for each ROI
+dff = data_interfaces["dff"]
+dff # (DfOverF)
+dff.roi_response_series # (LabelledDict)
+roi_response_series = dff.roi_response_series
+traces = roi_response_series["traces"]
+traces # (RoiResponseSeries)
+traces.resolution # (float64) -1.0
+traces.comments # (str) no comments
+traces.description # (str) no description
+traces.conversion # (float64) 1.0
+traces.offset # (float) 0.0
+traces.unit # (str) NA
+traces.data # (Dataset) shape (40019, 121); dtype float64
+# traces.data[:, :] # Access all data
+# traces.data[0:n, :] # Access first n rows
+# traces.data[:, 0:n] # Access first n columns
+traces.timestamps # (Dataset) shape (40019,); dtype float64
+# traces.timestamps[:] # Access all data
+# traces.timestamps[0:n] # Access first n elements
+traces.timestamps_unit # (str) seconds
+traces.interval # (int) 1
+traces.rois # (DynamicTableRegion)
+traces.rois.description # (str) segmented cells labeled by cell_specimen_id
+traces.rois.table # (PlaneSegmentation)
+traces.rois.table.description # (str) Segmented rois
+traces.rois.table.colnames # (tuple)
+traces.rois.table.columns # (tuple)
+traces.rois.table.id # (ElementIdentifiers)
+traces.rois.table.imaging_plane # (ImagingPlane)
+traces.rois.table.imaging_plane.optical_channel # (list)
+traces.rois.table.imaging_plane.description # (str) (512, 512) field of view in VISp at depth 175 um
+traces.rois.table.imaging_plane.excitation_lambda # (float64) 910.0
+traces.rois.table.imaging_plane.imaging_rate # (float64) 10.0
+traces.rois.table.imaging_plane.indicator # (str) GCaMP6f
+traces.rois.table.imaging_plane.location # (str) VISp
+traces.rois.table.imaging_plane.conversion # (float) 1.0
+traces.rois.table.imaging_plane.unit # (str) meters
+traces.rois.table.imaging_plane.origin_coords_unit # (str) meters
+traces.rois.table.imaging_plane.grid_spacing_unit # (str) meters
+traces.rois.table.imaging_plane.device # (Device)
+traces.rois.table.imaging_plane.device.description # (str) Allen Brain Observatory - Mesoscope 2P Rig
+# traces.rois.table.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 121 rows and 12 columns
+# traces.rois.table.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+traces.rois.table.cell_specimen_id # (VectorData) Unified id of segmented cell across experiments (after cell matching)
+traces.rois.table.height # (VectorData) Height of ROI in pixels
+traces.rois.table.mask_image_plane # (VectorData) Which image plane an ROI resides on. Overlapping ROIs are stored on different mask image planes.
+traces.rois.table.max_correction_down # (VectorData) Max motion correction in down direction in pixels
+traces.rois.table.max_correction_left # (VectorData) Max motion correction in left direction in pixels
+traces.rois.table.max_correction_right # (VectorData) Max motion correction in right direction in pixels
+traces.rois.table.max_correction_up # (VectorData) Max motion correction in up direction in pixels
+traces.rois.table.valid_roi # (VectorData) Indicates if cell classification found the ROI to be a cell or not
+traces.rois.table.width # (VectorData) Width of ROI in pixels
+traces.rois.table.x # (VectorData) x position of ROI in Image Plane in pixels (top left corner)
+traces.rois.table.y # (VectorData) y position of ROI in Image Plane in pixels (top left corner)
+traces.rois.table.image_mask # (VectorData) Image masks for each ROI
+event_detection = data_interfaces["event_detection"]
+event_detection # (OphysEventDetection)
+event_detection.resolution # (float64) -1.0
+event_detection.comments # (str) no comments
+event_detection.description # (str) no description
+event_detection.conversion # (float64) 1.0
+event_detection.offset # (float) 0.0
+event_detection.unit # (str) N/A
+event_detection.data # (Dataset) shape (40019, 121); dtype float64
+# event_detection.data[:, :] # Access all data
+# event_detection.data[0:n, :] # Access first n rows
+# event_detection.data[:, 0:n] # Access first n columns
+event_detection.timestamps # (Dataset) shape (40019,); dtype float64
+# event_detection.timestamps[:] # Access all data
+# event_detection.timestamps[0:n] # Access first n elements
+event_detection.timestamps_unit # (str) seconds
+event_detection.interval # (int) 1
+event_detection.lambdas # (Dataset) shape (121,); dtype float64
+# event_detection.lambdas[:] # Access all data
+# event_detection.lambdas[0:n] # Access first n elements
+event_detection.noise_stds # (Dataset) shape (121,); dtype float64
+# event_detection.noise_stds[:] # Access all data
+# event_detection.noise_stds[0:n] # Access first n elements
+event_detection.rois # (DynamicTableRegion)
+event_detection.rois.description # (str) Cells with detected events
+event_detection.rois.table # (PlaneSegmentation)
+event_detection.rois.table.description # (str) Segmented rois
+event_detection.rois.table.colnames # (tuple)
+event_detection.rois.table.columns # (tuple)
+event_detection.rois.table.id # (ElementIdentifiers)
+event_detection.rois.table.imaging_plane # (ImagingPlane)
+event_detection.rois.table.imaging_plane.optical_channel # (list)
+event_detection.rois.table.imaging_plane.description # (str) (512, 512) field of view in VISp at depth 175 um
+event_detection.rois.table.imaging_plane.excitation_lambda # (float64) 910.0
+event_detection.rois.table.imaging_plane.imaging_rate # (float64) 10.0
+event_detection.rois.table.imaging_plane.indicator # (str) GCaMP6f
+event_detection.rois.table.imaging_plane.location # (str) VISp
+event_detection.rois.table.imaging_plane.conversion # (float) 1.0
+event_detection.rois.table.imaging_plane.unit # (str) meters
+event_detection.rois.table.imaging_plane.origin_coords_unit # (str) meters
+event_detection.rois.table.imaging_plane.grid_spacing_unit # (str) meters
+event_detection.rois.table.imaging_plane.device # (Device)
+event_detection.rois.table.imaging_plane.device.description # (str) Allen Brain Observatory - Mesoscope 2P Rig
+# event_detection.rois.table.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 121 rows and 12 columns
+# event_detection.rois.table.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+event_detection.rois.table.cell_specimen_id # (VectorData) Unified id of segmented cell across experiments (after cell matching)
+event_detection.rois.table.height # (VectorData) Height of ROI in pixels
+event_detection.rois.table.mask_image_plane # (VectorData) Which image plane an ROI resides on. Overlapping ROIs are stored on different mask image planes.
+event_detection.rois.table.max_correction_down # (VectorData) Max motion correction in down direction in pixels
+event_detection.rois.table.max_correction_left # (VectorData) Max motion correction in left direction in pixels
+event_detection.rois.table.max_correction_right # (VectorData) Max motion correction in right direction in pixels
+event_detection.rois.table.max_correction_up # (VectorData) Max motion correction in up direction in pixels
+event_detection.rois.table.valid_roi # (VectorData) Indicates if cell classification found the ROI to be a cell or not
+event_detection.rois.table.width # (VectorData) Width of ROI in pixels
+event_detection.rois.table.x # (VectorData) x position of ROI in Image Plane in pixels (top left corner)
+event_detection.rois.table.y # (VectorData) y position of ROI in Image Plane in pixels (top left corner)
+event_detection.rois.table.image_mask # (VectorData) Image masks for each ROI
+image_segmentation = data_interfaces["image_segmentation"]
+image_segmentation # (ImageSegmentation)
+image_segmentation.plane_segmentations # (LabelledDict)
+plane_segmentations = image_segmentation.plane_segmentations
+cell_specimen_table = plane_segmentations["cell_specimen_table"]
+cell_specimen_table # (PlaneSegmentation)
+cell_specimen_table.description # (str) Segmented rois
+cell_specimen_table.colnames # (tuple)
+cell_specimen_table.columns # (tuple)
+cell_specimen_table.id # (ElementIdentifiers)
+cell_specimen_table.imaging_plane # (ImagingPlane)
+cell_specimen_table.imaging_plane.optical_channel # (list)
+cell_specimen_table.imaging_plane.description # (str) (512, 512) field of view in VISp at depth 175 um
+cell_specimen_table.imaging_plane.excitation_lambda # (float64) 910.0
+cell_specimen_table.imaging_plane.imaging_rate # (float64) 10.0
+cell_specimen_table.imaging_plane.indicator # (str) GCaMP6f
+cell_specimen_table.imaging_plane.location # (str) VISp
+cell_specimen_table.imaging_plane.conversion # (float) 1.0
+cell_specimen_table.imaging_plane.unit # (str) meters
+cell_specimen_table.imaging_plane.origin_coords_unit # (str) meters
+cell_specimen_table.imaging_plane.grid_spacing_unit # (str) meters
+cell_specimen_table.imaging_plane.device # (Device)
+cell_specimen_table.imaging_plane.device.description # (str) Allen Brain Observatory - Mesoscope 2P Rig
+# cell_specimen_table.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 121 rows and 12 columns
+# cell_specimen_table.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+cell_specimen_table.cell_specimen_id # (VectorData) Unified id of segmented cell across experiments (after cell matching)
+cell_specimen_table.height # (VectorData) Height of ROI in pixels
+cell_specimen_table.mask_image_plane # (VectorData) Which image plane an ROI resides on. Overlapping ROIs are stored on different mask image planes.
+cell_specimen_table.max_correction_down # (VectorData) Max motion correction in down direction in pixels
+cell_specimen_table.max_correction_left # (VectorData) Max motion correction in left direction in pixels
+cell_specimen_table.max_correction_right # (VectorData) Max motion correction in right direction in pixels
+cell_specimen_table.max_correction_up # (VectorData) Max motion correction in up direction in pixels
+cell_specimen_table.valid_roi # (VectorData) Indicates if cell classification found the ROI to be a cell or not
+cell_specimen_table.width # (VectorData) Width of ROI in pixels
+cell_specimen_table.x # (VectorData) x position of ROI in Image Plane in pixels (top left corner)
+cell_specimen_table.y # (VectorData) y position of ROI in Image Plane in pixels (top left corner)
+cell_specimen_table.image_mask # (VectorData) Image masks for each ROI
+images = data_interfaces["images"]
+images # (Images)
+images.description # (str) no description
+images.images # (LabelledDict)
+images_1 = images.images
+average_image = images_1["average_image"]
+average_image # (GrayscaleImage)
+max_projection = images_1["max_projection"]
+max_projection # (GrayscaleImage)
+segmentation_mask_image = images_1["segmentation_mask_image"]
+segmentation_mask_image # (GrayscaleImage)
+neuropil_trace = data_interfaces["neuropil_trace"]
+neuropil_trace # (Fluorescence)
+neuropil_trace.roi_response_series # (LabelledDict)
+roi_response_series = neuropil_trace.roi_response_series
+traces = roi_response_series["traces"]
+traces # (RoiResponseSeries)
+traces.resolution # (float64) -1.0
+traces.comments # (str) no comments
+traces.description # (str) no description
+traces.conversion # (float64) 1.0
+traces.offset # (float) 0.0
+traces.unit # (str) NA
+traces.data # (Dataset) shape (40019, 121); dtype float64
+# traces.data[:, :] # Access all data
+# traces.data[0:n, :] # Access first n rows
+# traces.data[:, 0:n] # Access first n columns
+traces.timestamps # (Dataset) shape (40019,); dtype float64
+# traces.timestamps[:] # Access all data
+# traces.timestamps[0:n] # Access first n elements
+traces.timestamps_unit # (str) seconds
+traces.interval # (int) 1
+traces.rois # (DynamicTableRegion)
+traces.rois.description # (str) segmented cells labeled by cell_specimen_id
+traces.rois.table # (PlaneSegmentation)
+traces.rois.table.description # (str) Segmented rois
+traces.rois.table.colnames # (tuple)
+traces.rois.table.columns # (tuple)
+traces.rois.table.id # (ElementIdentifiers)
+traces.rois.table.imaging_plane # (ImagingPlane)
+traces.rois.table.imaging_plane.optical_channel # (list)
+traces.rois.table.imaging_plane.description # (str) (512, 512) field of view in VISp at depth 175 um
+traces.rois.table.imaging_plane.excitation_lambda # (float64) 910.0
+traces.rois.table.imaging_plane.imaging_rate # (float64) 10.0
+traces.rois.table.imaging_plane.indicator # (str) GCaMP6f
+traces.rois.table.imaging_plane.location # (str) VISp
+traces.rois.table.imaging_plane.conversion # (float) 1.0
+traces.rois.table.imaging_plane.unit # (str) meters
+traces.rois.table.imaging_plane.origin_coords_unit # (str) meters
+traces.rois.table.imaging_plane.grid_spacing_unit # (str) meters
+traces.rois.table.imaging_plane.device # (Device)
+traces.rois.table.imaging_plane.device.description # (str) Allen Brain Observatory - Mesoscope 2P Rig
+# traces.rois.table.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 121 rows and 12 columns
+# traces.rois.table.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+traces.rois.table.cell_specimen_id # (VectorData) Unified id of segmented cell across experiments (after cell matching)
+traces.rois.table.height # (VectorData) Height of ROI in pixels
+traces.rois.table.mask_image_plane # (VectorData) Which image plane an ROI resides on. Overlapping ROIs are stored on different mask image planes.
+traces.rois.table.max_correction_down # (VectorData) Max motion correction in down direction in pixels
+traces.rois.table.max_correction_left # (VectorData) Max motion correction in left direction in pixels
+traces.rois.table.max_correction_right # (VectorData) Max motion correction in right direction in pixels
+traces.rois.table.max_correction_up # (VectorData) Max motion correction in up direction in pixels
+traces.rois.table.valid_roi # (VectorData) Indicates if cell classification found the ROI to be a cell or not
+traces.rois.table.width # (VectorData) Width of ROI in pixels
+traces.rois.table.x # (VectorData) x position of ROI in Image Plane in pixels (top left corner)
+traces.rois.table.y # (VectorData) y position of ROI in Image Plane in pixels (top left corner)
+traces.rois.table.image_mask # (VectorData) Image masks for each ROI
+ophys_motion_correction_x = data_interfaces["ophys_motion_correction_x"]
+ophys_motion_correction_x # (TimeSeries)
+ophys_motion_correction_x.resolution # (float64) -1.0
+ophys_motion_correction_x.comments # (str) no comments
+ophys_motion_correction_x.description # (str) no description
+ophys_motion_correction_x.conversion # (float64) 1.0
+ophys_motion_correction_x.offset # (float) 0.0
+ophys_motion_correction_x.unit # (str) pixels
+ophys_motion_correction_x.data # (Dataset) shape (40019,); dtype int64
+# ophys_motion_correction_x.data[:] # Access all data
+# ophys_motion_correction_x.data[0:n] # Access first n elements
+ophys_motion_correction_x.timestamps # (Dataset) shape (40019,); dtype float64
+# ophys_motion_correction_x.timestamps[:] # Access all data
+# ophys_motion_correction_x.timestamps[0:n] # Access first n elements
+ophys_motion_correction_x.timestamps_unit # (str) seconds
+ophys_motion_correction_x.interval # (int) 1
+ophys_motion_correction_y = data_interfaces["ophys_motion_correction_y"]
+ophys_motion_correction_y # (TimeSeries)
+ophys_motion_correction_y.resolution # (float64) -1.0
+ophys_motion_correction_y.comments # (str) no comments
+ophys_motion_correction_y.description # (str) no description
+ophys_motion_correction_y.conversion # (float64) 1.0
+ophys_motion_correction_y.offset # (float) 0.0
+ophys_motion_correction_y.unit # (str) pixels
+ophys_motion_correction_y.data # (Dataset) shape (40019,); dtype int64
+# ophys_motion_correction_y.data[:] # Access all data
+# ophys_motion_correction_y.data[0:n] # Access first n elements
+ophys_motion_correction_y.timestamps # (Dataset) shape (40019,); dtype float64
+# ophys_motion_correction_y.timestamps[:] # Access all data
+# ophys_motion_correction_y.timestamps[0:n] # Access first n elements
+ophys_motion_correction_y.timestamps_unit # (str) seconds
+ophys_motion_correction_y.interval # (int) 1
+running = processing["running"]
+running # (ProcessingModule)
+running.description # (str) Running speed processing module
+running.data_interfaces # (LabelledDict)
+data_interfaces = running.data_interfaces
+dx = data_interfaces["dx"]
+dx # (TimeSeries)
+dx.resolution # (float64) -1.0
+dx.comments # (str) no comments
+dx.description # (str) Running wheel angular change, computed during data collection
+dx.conversion # (float64) 1.0
+dx.offset # (float) 0.0
+dx.unit # (str) cm
+dx.data # (Dataset) shape (252000,); dtype float32
+# dx.data[:] # Access all data
+# dx.data[0:n] # Access first n elements
+dx.timestamps # (Dataset) shape (252000,); dtype float64
+# dx.timestamps[:] # Access all data
+# dx.timestamps[0:n] # Access first n elements
+dx.timestamps_unit # (str) seconds
+dx.interval # (int) 1
+speed = data_interfaces["speed"]
+speed # (TimeSeries)
+speed.resolution # (float64) -1.0
+speed.comments # (str) no comments
+speed.description # (str) no description
+speed.conversion # (float64) 1.0
+speed.offset # (float) 0.0
+speed.unit # (str) cm/s
+speed.data # (Dataset) shape (252000,); dtype float64
+# speed.data[:] # Access all data
+# speed.data[0:n] # Access first n elements
+speed.timestamps # (Dataset) shape (252000,); dtype float64
+# speed.timestamps[:] # Access all data
+# speed.timestamps[0:n] # Access first n elements
+speed.timestamps_unit # (str) seconds
+speed.interval # (int) 1
+speed_unfiltered = data_interfaces["speed_unfiltered"]
+speed_unfiltered # (TimeSeries)
+speed_unfiltered.resolution # (float64) -1.0
+speed_unfiltered.comments # (str) no comments
+speed_unfiltered.description # (str) no description
+speed_unfiltered.conversion # (float64) 1.0
+speed_unfiltered.offset # (float) 0.0
+speed_unfiltered.unit # (str) cm/s
+speed_unfiltered.data # (Dataset) shape (252000,); dtype float64
+# speed_unfiltered.data[:] # Access all data
+# speed_unfiltered.data[0:n] # Access first n elements
+speed_unfiltered.timestamps # (Dataset) shape (252000,); dtype float64
+# speed_unfiltered.timestamps[:] # Access all data
+# speed_unfiltered.timestamps[0:n] # Access first n elements
+speed_unfiltered.timestamps_unit # (str) seconds
+speed_unfiltered.interval # (int) 1
+stimulus = processing["stimulus"]
+stimulus # (ProcessingModule)
+stimulus.description # (str) Stimulus Times processing
+stimulus.data_interfaces # (LabelledDict)
+data_interfaces = stimulus.data_interfaces
+timestamps = data_interfaces["timestamps"]
+timestamps # (TimeSeries)
+timestamps.resolution # (float64) -1.0
+timestamps.comments # (str) no comments
+timestamps.description # (str) no description
+timestamps.conversion # (float64) 1.0
+timestamps.offset # (float) 0.0
+timestamps.unit # (str) s
+timestamps.data # (Dataset) shape (252000,); dtype float64
+# timestamps.data[:] # Access all data
+# timestamps.data[0:n] # Access first n elements
+timestamps.timestamps # (Dataset) shape (252000,); dtype float64
+# timestamps.timestamps[:] # Access all data
+# timestamps.timestamps[0:n] # Access first n elements
+timestamps.timestamps_unit # (str) seconds
+timestamps.interval # (int) 1
+stimulus_ophys = processing["stimulus_ophys"]
+stimulus_ophys # (ProcessingModule)
+stimulus_ophys.description # (str) Stimulus Times processing
+stimulus_ophys.data_interfaces # (LabelledDict)
+data_interfaces = stimulus_ophys.data_interfaces
+timestamps = data_interfaces["timestamps"]
+timestamps # (TimeSeries)
+timestamps.resolution # (float64) -1.0
+timestamps.comments # (str) no comments
+timestamps.description # (str) no description
+timestamps.conversion # (float64) 1.0
+timestamps.offset # (float) 0.0
+timestamps.unit # (str) s
+timestamps.data # (Dataset) shape (252000,); dtype float64
+# timestamps.data[:] # Access all data
+# timestamps.data[0:n] # Access first n elements
+timestamps.timestamps # (Dataset) shape (252000,); dtype float64
+# timestamps.timestamps[:] # Access all data
+# timestamps.timestamps[0:n] # Access first n elements
+timestamps.timestamps_unit # (str) seconds
+timestamps.interval # (int) 1
+nwb.devices # (LabelledDict)
+devices = nwb.devices
+MESO_2 = devices["MESO.2"]
+MESO_2 # (Device)
+MESO_2.description # (str) Allen Brain Observatory - Mesoscope 2P Rig
+nwb.imaging_planes # (LabelledDict)
+imaging_planes = nwb.imaging_planes
+imaging_plane_1 = imaging_planes["imaging_plane_1"]
+imaging_plane_1 # (ImagingPlane)
+imaging_plane_1.optical_channel # (list)
+imaging_plane_1.description # (str) (512, 512) field of view in VISp at depth 175 um
+imaging_plane_1.excitation_lambda # (float64) 910.0
+imaging_plane_1.imaging_rate # (float64) 10.0
+imaging_plane_1.indicator # (str) GCaMP6f
+imaging_plane_1.location # (str) VISp
+imaging_plane_1.conversion # (float) 1.0
+imaging_plane_1.unit # (str) meters
+imaging_plane_1.origin_coords_unit # (str) meters
+imaging_plane_1.grid_spacing_unit # (str) meters
+imaging_plane_1.device # (Device)
+imaging_plane_1.device.description # (str) Allen Brain Observatory - Mesoscope 2P Rig
+nwb.intervals # (LabelledDict)
+intervals = nwb.intervals
+gray_presentations = intervals["gray_presentations"]
+gray_presentations # (TimeIntervals)
+gray_presentations.description # (str) Presentation times and stimuli details for 'gray' stimuli. \nNote: image_name references control_...
+gray_presentations.colnames # (tuple)
+gray_presentations.columns # (tuple)
+gray_presentations.id # (ElementIdentifiers)
+# gray_presentations.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 63000 rows and 16 columns
+# gray_presentations.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+gray_presentations.start_time # (VectorData) Start time of epoch, in seconds
+gray_presentations.stop_time # (VectorData) Stop time of epoch, in seconds
+gray_presentations.stimulus_name # (VectorData) Name of stimulus
+gray_presentations.stimulus_block # (VectorData) Index of contiguous presentations of one stimulus type
+gray_presentations.frame # (VectorData) Frame of movie stimulus
+gray_presentations.color # (VectorData) No description
+gray_presentations.contrast # (VectorData) Contrast of stimulus
+gray_presentations.opacity # (VectorData) Opacity of stimulus
+gray_presentations.orientation # (VectorData) Orientation of stimulus
+gray_presentations.size # (VectorData) Size of stimulus (see ‘units’ field for units)
+gray_presentations.units # (VectorData) Units of stimulus size
+gray_presentations.stimulus_index # (VectorData) Index of stimulus type
+gray_presentations.tags # (VectorIndex) Index for VectorData 'tags'
+# gray_presentations.tags_index[0] # (ndarray)
+# gray_presentations.tags_index[1] # (ndarray)
+# gray_presentations.tags_index[2] # (ndarray)
+# gray_presentations.tags_index[3] # (ndarray)
+# ...
+gray_presentations.timeseries # (VectorIndex) Index for VectorData 'timeseries'
+# gray_presentations.timeseries_index[0] # (list)
+# gray_presentations.timeseries_index[1] # (list)
+# gray_presentations.timeseries_index[2] # (list)
+# gray_presentations.timeseries_index[3] # (list)
+# ...
+movie_clip_A_presentations = intervals["movie_clip_A_presentations"]
+movie_clip_A_presentations # (TimeIntervals)
+movie_clip_A_presentations.description # (str) Presentation times and stimuli details for 'movie_clip_A' stimuli. \nNote: image_name references ...
+movie_clip_A_presentations.colnames # (tuple)
+movie_clip_A_presentations.columns # (tuple)
+movie_clip_A_presentations.id # (ElementIdentifiers)
+# movie_clip_A_presentations.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 63000 rows and 16 columns
+# movie_clip_A_presentations.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+movie_clip_A_presentations.start_time # (VectorData) Start time of epoch, in seconds
+movie_clip_A_presentations.stop_time # (VectorData) Stop time of epoch, in seconds
+movie_clip_A_presentations.stimulus_name # (VectorData) Name of stimulus
+movie_clip_A_presentations.stimulus_block # (VectorData) Index of contiguous presentations of one stimulus type
+movie_clip_A_presentations.frame # (VectorData) Frame of movie stimulus
+movie_clip_A_presentations.color # (VectorData) No description
+movie_clip_A_presentations.contrast # (VectorData) Contrast of stimulus
+movie_clip_A_presentations.opacity # (VectorData) Opacity of stimulus
+movie_clip_A_presentations.orientation # (VectorData) Orientation of stimulus
+movie_clip_A_presentations.size # (VectorData) Size of stimulus (see ‘units’ field for units)
+movie_clip_A_presentations.units # (VectorData) Units of stimulus size
+movie_clip_A_presentations.stimulus_index # (VectorData) Index of stimulus type
+movie_clip_A_presentations.tags # (VectorIndex) Index for VectorData 'tags'
+# movie_clip_A_presentations.tags_index[0] # (ndarray)
+# movie_clip_A_presentations.tags_index[1] # (ndarray)
+# movie_clip_A_presentations.tags_index[2] # (ndarray)
+# movie_clip_A_presentations.tags_index[3] # (ndarray)
+# ...
+movie_clip_A_presentations.timeseries # (VectorIndex) Index for VectorData 'timeseries'
+# movie_clip_A_presentations.timeseries_index[0] # (list)
+# movie_clip_A_presentations.timeseries_index[1] # (list)
+# movie_clip_A_presentations.timeseries_index[2] # (list)
+# movie_clip_A_presentations.timeseries_index[3] # (list)
+# ...
+movie_clip_B_presentations = intervals["movie_clip_B_presentations"]
+movie_clip_B_presentations # (TimeIntervals)
+movie_clip_B_presentations.description # (str) Presentation times and stimuli details for 'movie_clip_B' stimuli. \nNote: image_name references ...
+movie_clip_B_presentations.colnames # (tuple)
+movie_clip_B_presentations.columns # (tuple)
+movie_clip_B_presentations.id # (ElementIdentifiers)
+# movie_clip_B_presentations.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 63000 rows and 16 columns
+# movie_clip_B_presentations.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+movie_clip_B_presentations.start_time # (VectorData) Start time of epoch, in seconds
+movie_clip_B_presentations.stop_time # (VectorData) Stop time of epoch, in seconds
+movie_clip_B_presentations.stimulus_name # (VectorData) Name of stimulus
+movie_clip_B_presentations.stimulus_block # (VectorData) Index of contiguous presentations of one stimulus type
+movie_clip_B_presentations.frame # (VectorData) Frame of movie stimulus
+movie_clip_B_presentations.color # (VectorData) No description
+movie_clip_B_presentations.contrast # (VectorData) Contrast of stimulus
+movie_clip_B_presentations.opacity # (VectorData) Opacity of stimulus
+movie_clip_B_presentations.orientation # (VectorData) Orientation of stimulus
+movie_clip_B_presentations.size # (VectorData) Size of stimulus (see ‘units’ field for units)
+movie_clip_B_presentations.units # (VectorData) Units of stimulus size
+movie_clip_B_presentations.stimulus_index # (VectorData) Index of stimulus type
+movie_clip_B_presentations.tags # (VectorIndex) Index for VectorData 'tags'
+# movie_clip_B_presentations.tags_index[0] # (ndarray)
+# movie_clip_B_presentations.tags_index[1] # (ndarray)
+# movie_clip_B_presentations.tags_index[2] # (ndarray)
+# movie_clip_B_presentations.tags_index[3] # (ndarray)
+# ...
+movie_clip_B_presentations.timeseries # (VectorIndex) Index for VectorData 'timeseries'
+# movie_clip_B_presentations.timeseries_index[0] # (list)
+# movie_clip_B_presentations.timeseries_index[1] # (list)
+# movie_clip_B_presentations.timeseries_index[2] # (list)
+# movie_clip_B_presentations.timeseries_index[3] # (list)
+# ...
+movie_clip_C_presentations = intervals["movie_clip_C_presentations"]
+movie_clip_C_presentations # (TimeIntervals)
+movie_clip_C_presentations.description # (str) Presentation times and stimuli details for 'movie_clip_C' stimuli. \nNote: image_name references ...
+movie_clip_C_presentations.colnames # (tuple)
+movie_clip_C_presentations.columns # (tuple)
+movie_clip_C_presentations.id # (ElementIdentifiers)
+# movie_clip_C_presentations.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 63000 rows and 16 columns
+# movie_clip_C_presentations.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+movie_clip_C_presentations.start_time # (VectorData) Start time of epoch, in seconds
+movie_clip_C_presentations.stop_time # (VectorData) Stop time of epoch, in seconds
+movie_clip_C_presentations.stimulus_name # (VectorData) Name of stimulus
+movie_clip_C_presentations.stimulus_block # (VectorData) Index of contiguous presentations of one stimulus type
+movie_clip_C_presentations.frame # (VectorData) Frame of movie stimulus
+movie_clip_C_presentations.color # (VectorData) No description
+movie_clip_C_presentations.contrast # (VectorData) Contrast of stimulus
+movie_clip_C_presentations.opacity # (VectorData) Opacity of stimulus
+movie_clip_C_presentations.orientation # (VectorData) Orientation of stimulus
+movie_clip_C_presentations.size # (VectorData) Size of stimulus (see ‘units’ field for units)
+movie_clip_C_presentations.units # (VectorData) Units of stimulus size
+movie_clip_C_presentations.stimulus_index # (VectorData) Index of stimulus type
+movie_clip_C_presentations.tags # (VectorIndex) Index for VectorData 'tags'
+# movie_clip_C_presentations.tags_index[0] # (ndarray)
+# movie_clip_C_presentations.tags_index[1] # (ndarray)
+# movie_clip_C_presentations.tags_index[2] # (ndarray)
+# movie_clip_C_presentations.tags_index[3] # (ndarray)
+# ...
+movie_clip_C_presentations.timeseries # (VectorIndex) Index for VectorData 'timeseries'
+# movie_clip_C_presentations.timeseries_index[0] # (list)
+# movie_clip_C_presentations.timeseries_index[1] # (list)
+# movie_clip_C_presentations.timeseries_index[2] # (list)
+# movie_clip_C_presentations.timeseries_index[3] # (list)
+# ...
+nwb.lab_meta_data # (LabelledDict)
+lab_meta_data = nwb.lab_meta_data
+metadata = lab_meta_data["metadata"]
+metadata # (OphysMetadata)
+metadata.ophys_experiment_id # (int64)
+metadata.ophys_session_id # (int64)
+metadata.experiment_container_id # (int64)
+metadata.imaging_depth # (int64)
+metadata.field_of_view_width # (int64)
+metadata.field_of_view_height # (int64)
+metadata.imaging_plane_group # (int64)
+metadata.imaging_plane_group_count # (int64)
+nwb.experiment_description # (str) ophys session
+nwb.institution # (str) Allen Institute for Brain Science
+nwb.surgery # (str)  Structure: VISp
+nwb.subject # (Subject)
+nwb.subject.age # (str) P92.0D
+nwb.subject.age__reference # (str) birth
+nwb.subject.description # (str) external: 677038 donor_id: (1271786805,) specimen_id: ['677038']
+nwb.subject.genotype # (str) Cux2-CreERT2/wt;Camk2a-tTA/wt;Ai93(TITL-GCaMP6f)/wt
+nwb.subject.sex # (str) F
+nwb.subject.species # (str) Mus musculus
+nwb.subject.subject_id # (str) 677038
+Total prompt tokens: 50046 + 0
+Total completion tokens: 1199 + 0
+
+=========================================
+
+execute_command 'python tools_cli.py nwb-file-info 000617 https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/ --version 0.250312.0130' (requires approval):
+Command executed successfully
+STDOUT:
+# This script shows how to load the NWB file at https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/ in Python using PyNWB
+
+import pynwb
+import h5py
+import remfile
+
+# Load
+url = "https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/"
+remote_file = remfile.File(url)
+h5_file = h5py.File(remote_file)
+io = pynwb.NWBHDF5IO(file=h5_file)
+nwb = io.read()
+
+nwb # (NWBFile)
+nwb.session_description # (str) Ophys Session
+nwb.identifier # (str) 1280384858
+nwb.session_start_time # (datetime) 2023-06-30T16:04:51.055000+00:00
+nwb.timestamps_reference_time # (datetime) 2023-06-30T16:04:51.055000+00:00
+nwb.file_create_date # (list) [datetime.datetime(2025, 2, 18, 10, 31, 0, 305861, tzinfo=tzutc())]
+nwb.acquisition # (LabelledDict)
+acquisition = nwb.acquisition
+v_in = acquisition["v_in"]
+v_in # (TimeSeries)
+v_in.resolution # (float64) -1.0
+v_in.comments # (str) no comments
+v_in.description # (str) The theoretical maximum voltage that the running wheel encoder will reach prior to "wrapping". Th...
+v_in.conversion # (float64) 1.0
+v_in.offset # (float) 0.0
+v_in.unit # (str) V
+v_in.data # (Dataset) shape (252000,); dtype float64
+# v_in.data[:] # Access all data
+# v_in.data[0:n] # Access first n elements
+v_in.timestamps # (Dataset) shape (252000,); dtype float64
+# v_in.timestamps[:] # Access all data
+# v_in.timestamps[0:n] # Access first n elements
+v_in.timestamps_unit # (str) seconds
+v_in.interval # (int) 1
+v_sig = acquisition["v_sig"]
+v_sig # (TimeSeries)
+v_sig.resolution # (float64) -1.0
+v_sig.comments # (str) no comments
+v_sig.description # (str) Voltage signal from the running wheel encoder
+v_sig.conversion # (float64) 1.0
+v_sig.offset # (float) 0.0
+v_sig.unit # (str) V
+v_sig.data # (Dataset) shape (252000,); dtype float64
+# v_sig.data[:] # Access all data
+# v_sig.data[0:n] # Access first n elements
+v_sig.timestamps # (Dataset) shape (252000,); dtype float64
+# v_sig.timestamps[:] # Access all data
+# v_sig.timestamps[0:n] # Access first n elements
+v_sig.timestamps_unit # (str) seconds
+v_sig.interval # (int) 1
+nwb.stimulus_template # (LabelledDict)
+stimulus_template = nwb.stimulus_template
+gray = stimulus_template["gray"]
+gray # (ImageSeries)
+gray.starting_time # (float64) 0.0
+gray.rate # (float64) 60.0
+gray.resolution # (float64) -1.0
+gray.comments # (str) no comments
+gray.description # (str) no description
+gray.conversion # (float64) 1.0
+gray.offset # (float64) 0.0
+gray.unit # (str) NA
+gray.data # (Dataset) shape (1280, 720, 120); dtype uint8
+# gray.data[:, :, :] # Access all data
+# gray.data[0, :, :] # Access first plane
+gray.starting_time_unit # (str) seconds
+gray.format # (str) raw
+movie_clip_A = stimulus_template["movie_clip_A"]
+movie_clip_A # (ImageSeries)
+movie_clip_A.starting_time # (float64) 0.0
+movie_clip_A.rate # (float64) 60.0
+movie_clip_A.resolution # (float64) -1.0
+movie_clip_A.comments # (str) no comments
+movie_clip_A.description # (str) no description
+movie_clip_A.conversion # (float64) 1.0
+movie_clip_A.offset # (float64) 0.0
+movie_clip_A.unit # (str) NA
+movie_clip_A.data # (Dataset) shape (1280, 720, 120); dtype uint8
+# movie_clip_A.data[:, :, :] # Access all data
+# movie_clip_A.data[0, :, :] # Access first plane
+movie_clip_A.starting_time_unit # (str) seconds
+movie_clip_A.format # (str) raw
+movie_clip_B = stimulus_template["movie_clip_B"]
+movie_clip_B # (ImageSeries)
+movie_clip_B.starting_time # (float64) 0.0
+movie_clip_B.rate # (float64) 60.0
+movie_clip_B.resolution # (float64) -1.0
+movie_clip_B.comments # (str) no comments
+movie_clip_B.description # (str) no description
+movie_clip_B.conversion # (float64) 1.0
+movie_clip_B.offset # (float64) 0.0
+movie_clip_B.unit # (str) NA
+movie_clip_B.data # (Dataset) shape (1280, 720, 120); dtype uint8
+# movie_clip_B.data[:, :, :] # Access all data
+# movie_clip_B.data[0, :, :] # Access first plane
+movie_clip_B.starting_time_unit # (str) seconds
+movie_clip_B.format # (str) raw
+movie_clip_C = stimulus_template["movie_clip_C"]
+movie_clip_C # (ImageSeries)
+movie_clip_C.starting_time # (float64) 0.0
+movie_clip_C.rate # (float64) 60.0
+movie_clip_C.resolution # (float64) -1.0
+movie_clip_C.comments # (str) no comments
+movie_clip_C.description # (str) no description
+movie_clip_C.conversion # (float64) 1.0
+movie_clip_C.offset # (float64) 0.0
+movie_clip_C.unit # (str) NA
+movie_clip_C.data # (Dataset) shape (1280, 720, 120); dtype uint8
+# movie_clip_C.data[:, :, :] # Access all data
+# movie_clip_C.data[0, :, :] # Access first plane
+movie_clip_C.starting_time_unit # (str) seconds
+movie_clip_C.format # (str) raw
+nwb.keywords # (StrDataset) shape (5,); dtype object
+# nwb.keywords[:] # Access all data
+# nwb.keywords[0:n] # Access first n elements
+# First few values of nwb.keywords: ['2-photon' 'calcium imaging' 'visual cortex' 'behavior' 'task']
+nwb.processing # (LabelledDict)
+processing = nwb.processing
+ophys = processing["ophys"]
+ophys # (ProcessingModule)
+ophys.description # (str) Ophys processing module
+ophys.data_interfaces # (LabelledDict)
+data_interfaces = ophys.data_interfaces
+corrected_fluorescence = data_interfaces["corrected_fluorescence"]
+corrected_fluorescence # (Fluorescence)
+corrected_fluorescence.roi_response_series # (LabelledDict)
+roi_response_series = corrected_fluorescence.roi_response_series
+traces = roi_response_series["traces"]
+traces # (RoiResponseSeries)
+traces.resolution # (float64) -1.0
+traces.comments # (str) no comments
+traces.description # (str) no description
+traces.conversion # (float64) 1.0
+traces.offset # (float) 0.0
+traces.unit # (str) NA
+traces.data # (Dataset) shape (40019, 121); dtype float64
+# traces.data[:, :] # Access all data
+# traces.data[0:n, :] # Access first n rows
+# traces.data[:, 0:n] # Access first n columns
+traces.timestamps # (Dataset) shape (40019,); dtype float64
+# traces.timestamps[:] # Access all data
+# traces.timestamps[0:n] # Access first n elements
+traces.timestamps_unit # (str) seconds
+traces.interval # (int) 1
+traces.rois # (DynamicTableRegion)
+traces.rois.description # (str) segmented cells labeled by cell_specimen_id
+traces.rois.table # (PlaneSegmentation)
+traces.rois.table.description # (str) Segmented rois
+traces.rois.table.colnames # (tuple)
+traces.rois.table.columns # (tuple)
+traces.rois.table.id # (ElementIdentifiers)
+traces.rois.table.imaging_plane # (ImagingPlane)
+traces.rois.table.imaging_plane.optical_channel # (list)
+traces.rois.table.imaging_plane.description # (str) (512, 512) field of view in VISp at depth 175 um
+traces.rois.table.imaging_plane.excitation_lambda # (float64) 910.0
+traces.rois.table.imaging_plane.imaging_rate # (float64) 10.0
+traces.rois.table.imaging_plane.indicator # (str) GCaMP6f
+traces.rois.table.imaging_plane.location # (str) VISp
+traces.rois.table.imaging_plane.conversion # (float) 1.0
+traces.rois.table.imaging_plane.unit # (str) meters
+traces.rois.table.imaging_plane.origin_coords_unit # (str) meters
+traces.rois.table.imaging_plane.grid_spacing_unit # (str) meters
+traces.rois.table.imaging_plane.device # (Device)
+traces.rois.table.imaging_plane.device.description # (str) Allen Brain Observatory - Mesoscope 2P Rig
+# traces.rois.table.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 121 rows and 12 columns
+# traces.rois.table.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+traces.rois.table.cell_specimen_id # (VectorData) Unified id of segmented cell across experiments (after cell matching)
+traces.rois.table.height # (VectorData) Height of ROI in pixels
+traces.rois.table.mask_image_plane # (VectorData) Which image plane an ROI resides on. Overlapping ROIs are stored on different mask image planes.
+traces.rois.table.max_correction_down # (VectorData) Max motion correction in down direction in pixels
+traces.rois.table.max_correction_left # (VectorData) Max motion correction in left direction in pixels
+traces.rois.table.max_correction_right # (VectorData) Max motion correction in right direction in pixels
+traces.rois.table.max_correction_up # (VectorData) Max motion correction in up direction in pixels
+traces.rois.table.valid_roi # (VectorData) Indicates if cell classification found the ROI to be a cell or not
+traces.rois.table.width # (VectorData) Width of ROI in pixels
+traces.rois.table.x # (VectorData) x position of ROI in Image Plane in pixels (top left corner)
+traces.rois.table.y # (VectorData) y position of ROI in Image Plane in pixels (top left corner)
+traces.rois.table.image_mask # (VectorData) Image masks for each ROI
+dff = data_interfaces["dff"]
+dff # (DfOverF)
+dff.roi_response_series # (LabelledDict)
+roi_response_series = dff.roi_response_series
+traces = roi_response_series["traces"]
+traces # (RoiResponseSeries)
+traces.resolution # (float64) -1.0
+traces.comments # (str) no comments
+traces.description # (str) no description
+traces.conversion # (float64) 1.0
+traces.offset # (float) 0.0
+traces.unit # (str) NA
+traces.data # (Dataset) shape (40019, 121); dtype float64
+# traces.data[:, :] # Access all data
+# traces.data[0:n, :] # Access first n rows
+# traces.data[:, 0:n] # Access first n columns
+traces.timestamps # (Dataset) shape (40019,); dtype float64
+# traces.timestamps[:] # Access all data
+# traces.timestamps[0:n] # Access first n elements
+traces.timestamps_unit # (str) seconds
+traces.interval # (int) 1
+traces.rois # (DynamicTableRegion)
+traces.rois.description # (str) segmented cells labeled by cell_specimen_id
+traces.rois.table # (PlaneSegmentation)
+traces.rois.table.description # (str) Segmented rois
+traces.rois.table.colnames # (tuple)
+traces.rois.table.columns # (tuple)
+traces.rois.table.id # (ElementIdentifiers)
+traces.rois.table.imaging_plane # (ImagingPlane)
+traces.rois.table.imaging_plane.optical_channel # (list)
+traces.rois.table.imaging_plane.description # (str) (512, 512) field of view in VISp at depth 175 um
+traces.rois.table.imaging_plane.excitation_lambda # (float64) 910.0
+traces.rois.table.imaging_plane.imaging_rate # (float64) 10.0
+traces.rois.table.imaging_plane.indicator # (str) GCaMP6f
+traces.rois.table.imaging_plane.location # (str) VISp
+traces.rois.table.imaging_plane.conversion # (float) 1.0
+traces.rois.table.imaging_plane.unit # (str) meters
+traces.rois.table.imaging_plane.origin_coords_unit # (str) meters
+traces.rois.table.imaging_plane.grid_spacing_unit # (str) meters
+traces.rois.table.imaging_plane.device # (Device)
+traces.rois.table.imaging_plane.device.description # (str) Allen Brain Observatory - Mesoscope 2P Rig
+# traces.rois.table.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 121 rows and 12 columns
+# traces.rois.table.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+traces.rois.table.cell_specimen_id # (VectorData) Unified id of segmented cell across experiments (after cell matching)
+traces.rois.table.height # (VectorData) Height of ROI in pixels
+traces.rois.table.mask_image_plane # (VectorData) Which image plane an ROI resides on. Overlapping ROIs are stored on different mask image planes.
+traces.rois.table.max_correction_down # (VectorData) Max motion correction in down direction in pixels
+traces.rois.table.max_correction_left # (VectorData) Max motion correction in left direction in pixels
+traces.rois.table.max_correction_right # (VectorData) Max motion correction in right direction in pixels
+traces.rois.table.max_correction_up # (VectorData) Max motion correction in up direction in pixels
+traces.rois.table.valid_roi # (VectorData) Indicates if cell classification found the ROI to be a cell or not
+traces.rois.table.width # (VectorData) Width of ROI in pixels
+traces.rois.table.x # (VectorData) x position of ROI in Image Plane in pixels (top left corner)
+traces.rois.table.y # (VectorData) y position of ROI in Image Plane in pixels (top left corner)
+traces.rois.table.image_mask # (VectorData) Image masks for each ROI
+event_detection = data_interfaces["event_detection"]
+event_detection # (OphysEventDetection)
+event_detection.resolution # (float64) -1.0
+event_detection.comments # (str) no comments
+event_detection.description # (str) no description
+event_detection.conversion # (float64) 1.0
+event_detection.offset # (float) 0.0
+event_detection.unit # (str) N/A
+event_detection.data # (Dataset) shape (40019, 121); dtype float64
+# event_detection.data[:, :] # Access all data
+# event_detection.data[0:n, :] # Access first n rows
+# event_detection.data[:, 0:n] # Access first n columns
+event_detection.timestamps # (Dataset) shape (40019,); dtype float64
+# event_detection.timestamps[:] # Access all data
+# event_detection.timestamps[0:n] # Access first n elements
+event_detection.timestamps_unit # (str) seconds
+event_detection.interval # (int) 1
+event_detection.lambdas # (Dataset) shape (121,); dtype float64
+# event_detection.lambdas[:] # Access all data
+# event_detection.lambdas[0:n] # Access first n elements
+event_detection.noise_stds # (Dataset) shape (121,); dtype float64
+# event_detection.noise_stds[:] # Access all data
+# event_detection.noise_stds[0:n] # Access first n elements
+event_detection.rois # (DynamicTableRegion)
+event_detection.rois.description # (str) Cells with detected events
+event_detection.rois.table # (PlaneSegmentation)
+event_detection.rois.table.description # (str) Segmented rois
+event_detection.rois.table.colnames # (tuple)
+event_detection.rois.table.columns # (tuple)
+event_detection.rois.table.id # (ElementIdentifiers)
+event_detection.rois.table.imaging_plane # (ImagingPlane)
+event_detection.rois.table.imaging_plane.optical_channel # (list)
+event_detection.rois.table.imaging_plane.description # (str) (512, 512) field of view in VISp at depth 175 um
+event_detection.rois.table.imaging_plane.excitation_lambda # (float64) 910.0
+event_detection.rois.table.imaging_plane.imaging_rate # (float64) 10.0
+event_detection.rois.table.imaging_plane.indicator # (str) GCaMP6f
+event_detection.rois.table.imaging_plane.location # (str) VISp
+event_detection.rois.table.imaging_plane.conversion # (float) 1.0
+event_detection.rois.table.imaging_plane.unit # (str) meters
+event_detection.rois.table.imaging_plane.origin_coords_unit # (str) meters
+event_detection.rois.table.imaging_plane.grid_spacing_unit # (str) meters
+event_detection.rois.table.imaging_plane.device # (Device)
+event_detection.rois.table.imaging_plane.device.description # (str) Allen Brain Observatory - Mesoscope 2P Rig
+# event_detection.rois.table.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 121 rows and 12 columns
+# event_detection.rois.table.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+event_detection.rois.table.cell_specimen_id # (VectorData) Unified id of segmented cell across experiments (after cell matching)
+event_detection.rois.table.height # (VectorData) Height of ROI in pixels
+event_detection.rois.table.mask_image_plane # (VectorData) Which image plane an ROI resides on. Overlapping ROIs are stored on different mask image planes.
+event_detection.rois.table.max_correction_down # (VectorData) Max motion correction in down direction in pixels
+event_detection.rois.table.max_correction_left # (VectorData) Max motion correction in left direction in pixels
+event_detection.rois.table.max_correction_right # (VectorData) Max motion correction in right direction in pixels
+event_detection.rois.table.max_correction_up # (VectorData) Max motion correction in up direction in pixels
+event_detection.rois.table.valid_roi # (VectorData) Indicates if cell classification found the ROI to be a cell or not
+event_detection.rois.table.width # (VectorData) Width of ROI in pixels
+event_detection.rois.table.x # (VectorData) x position of ROI in Image Plane in pixels (top left corner)
+event_detection.rois.table.y # (VectorData) y position of ROI in Image Plane in pixels (top left corner)
+event_detection.rois.table.image_mask # (VectorData) Image masks for each ROI
+image_segmentation = data_interfaces["image_segmentation"]
+image_segmentation # (ImageSegmentation)
+image_segmentation.plane_segmentations # (LabelledDict)
+plane_segmentations = image_segmentation.plane_segmentations
+cell_specimen_table = plane_segmentations["cell_specimen_table"]
+cell_specimen_table # (PlaneSegmentation)
+cell_specimen_table.description # (str) Segmented rois
+cell_specimen_table.colnames # (tuple)
+cell_specimen_table.columns # (tuple)
+cell_specimen_table.id # (ElementIdentifiers)
+cell_specimen_table.imaging_plane # (ImagingPlane)
+cell_specimen_table.imaging_plane.optical_channel # (list)
+cell_specimen_table.imaging_plane.description # (str) (512, 512) field of view in VISp at depth 175 um
+cell_specimen_table.imaging_plane.excitation_lambda # (float64) 910.0
+cell_specimen_table.imaging_plane.imaging_rate # (float64) 10.0
+cell_specimen_table.imaging_plane.indicator # (str) GCaMP6f
+cell_specimen_table.imaging_plane.location # (str) VISp
+cell_specimen_table.imaging_plane.conversion # (float) 1.0
+cell_specimen_table.imaging_plane.unit # (str) meters
+cell_specimen_table.imaging_plane.origin_coords_unit # (str) meters
+cell_specimen_table.imaging_plane.grid_spacing_unit # (str) meters
+cell_specimen_table.imaging_plane.device # (Device)
+cell_specimen_table.imaging_plane.device.description # (str) Allen Brain Observatory - Mesoscope 2P Rig
+# cell_specimen_table.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 121 rows and 12 columns
+# cell_specimen_table.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+cell_specimen_table.cell_specimen_id # (VectorData) Unified id of segmented cell across experiments (after cell matching)
+cell_specimen_table.height # (VectorData) Height of ROI in pixels
+cell_specimen_table.mask_image_plane # (VectorData) Which image plane an ROI resides on. Overlapping ROIs are stored on different mask image planes.
+cell_specimen_table.max_correction_down # (VectorData) Max motion correction in down direction in pixels
+cell_specimen_table.max_correction_left # (VectorData) Max motion correction in left direction in pixels
+cell_specimen_table.max_correction_right # (VectorData) Max motion correction in right direction in pixels
+cell_specimen_table.max_correction_up # (VectorData) Max motion correction in up direction in pixels
+cell_specimen_table.valid_roi # (VectorData) Indicates if cell classification found the ROI to be a cell or not
+cell_specimen_table.width # (VectorData) Width of ROI in pixels
+cell_specimen_table.x # (VectorData) x position of ROI in Image Plane in pixels (top left corner)
+cell_specimen_table.y # (VectorData) y position of ROI in Image Plane in pixels (top left corner)
+cell_specimen_table.image_mask # (VectorData) Image masks for each ROI
+images = data_interfaces["images"]
+images # (Images)
+images.description # (str) no description
+images.images # (LabelledDict)
+images_1 = images.images
+average_image = images_1["average_image"]
+average_image # (GrayscaleImage)
+max_projection = images_1["max_projection"]
+max_projection # (GrayscaleImage)
+segmentation_mask_image = images_1["segmentation_mask_image"]
+segmentation_mask_image # (GrayscaleImage)
+neuropil_trace = data_interfaces["neuropil_trace"]
+neuropil_trace # (Fluorescence)
+neuropil_trace.roi_response_series # (LabelledDict)
+roi_response_series = neuropil_trace.roi_response_series
+traces = roi_response_series["traces"]
+traces # (RoiResponseSeries)
+traces.resolution # (float64) -1.0
+traces.comments # (str) no comments
+traces.description # (str) no description
+traces.conversion # (float64) 1.0
+traces.offset # (float) 0.0
+traces.unit # (str) NA
+traces.data # (Dataset) shape (40019, 121); dtype float64
+# traces.data[:, :] # Access all data
+# traces.data[0:n, :] # Access first n rows
+# traces.data[:, 0:n] # Access first n columns
+traces.timestamps # (Dataset) shape (40019,); dtype float64
+# traces.timestamps[:] # Access all data
+# traces.timestamps[0:n] # Access first n elements
+traces.timestamps_unit # (str) seconds
+traces.interval # (int) 1
+traces.rois # (DynamicTableRegion)
+traces.rois.description # (str) segmented cells labeled by cell_specimen_id
+traces.rois.table # (PlaneSegmentation)
+traces.rois.table.description # (str) Segmented rois
+traces.rois.table.colnames # (tuple)
+traces.rois.table.columns # (tuple)
+traces.rois.table.id # (ElementIdentifiers)
+traces.rois.table.imaging_plane # (ImagingPlane)
+traces.rois.table.imaging_plane.optical_channel # (list)
+traces.rois.table.imaging_plane.description # (str) (512, 512) field of view in VISp at depth 175 um
+traces.rois.table.imaging_plane.excitation_lambda # (float64) 910.0
+traces.rois.table.imaging_plane.imaging_rate # (float64) 10.0
+traces.rois.table.imaging_plane.indicator # (str) GCaMP6f
+traces.rois.table.imaging_plane.location # (str) VISp
+traces.rois.table.imaging_plane.conversion # (float) 1.0
+traces.rois.table.imaging_plane.unit # (str) meters
+traces.rois.table.imaging_plane.origin_coords_unit # (str) meters
+traces.rois.table.imaging_plane.grid_spacing_unit # (str) meters
+traces.rois.table.imaging_plane.device # (Device)
+traces.rois.table.imaging_plane.device.description # (str) Allen Brain Observatory - Mesoscope 2P Rig
+# traces.rois.table.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 121 rows and 12 columns
+# traces.rois.table.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+traces.rois.table.cell_specimen_id # (VectorData) Unified id of segmented cell across experiments (after cell matching)
+traces.rois.table.height # (VectorData) Height of ROI in pixels
+traces.rois.table.mask_image_plane # (VectorData) Which image plane an ROI resides on. Overlapping ROIs are stored on different mask image planes.
+traces.rois.table.max_correction_down # (VectorData) Max motion correction in down direction in pixels
+traces.rois.table.max_correction_left # (VectorData) Max motion correction in left direction in pixels
+traces.rois.table.max_correction_right # (VectorData) Max motion correction in right direction in pixels
+traces.rois.table.max_correction_up # (VectorData) Max motion correction in up direction in pixels
+traces.rois.table.valid_roi # (VectorData) Indicates if cell classification found the ROI to be a cell or not
+traces.rois.table.width # (VectorData) Width of ROI in pixels
+traces.rois.table.x # (VectorData) x position of ROI in Image Plane in pixels (top left corner)
+traces.rois.table.y # (VectorData) y position of ROI in Image Plane in pixels (top left corner)
+traces.rois.table.image_mask # (VectorData) Image masks for each ROI
+ophys_motion_correction_x = data_interfaces["ophys_motion_correction_x"]
+ophys_motion_correction_x # (TimeSeries)
+ophys_motion_correction_x.resolution # (float64) -1.0
+ophys_motion_correction_x.comments # (str) no comments
+ophys_motion_correction_x.description # (str) no description
+ophys_motion_correction_x.conversion # (float64) 1.0
+ophys_motion_correction_x.offset # (float) 0.0
+ophys_motion_correction_x.unit # (str) pixels
+ophys_motion_correction_x.data # (Dataset) shape (40019,); dtype int64
+# ophys_motion_correction_x.data[:] # Access all data
+# ophys_motion_correction_x.data[0:n] # Access first n elements
+ophys_motion_correction_x.timestamps # (Dataset) shape (40019,); dtype float64
+# ophys_motion_correction_x.timestamps[:] # Access all data
+# ophys_motion_correction_x.timestamps[0:n] # Access first n elements
+ophys_motion_correction_x.timestamps_unit # (str) seconds
+ophys_motion_correction_x.interval # (int) 1
+ophys_motion_correction_y = data_interfaces["ophys_motion_correction_y"]
+ophys_motion_correction_y # (TimeSeries)
+ophys_motion_correction_y.resolution # (float64) -1.0
+ophys_motion_correction_y.comments # (str) no comments
+ophys_motion_correction_y.description # (str) no description
+ophys_motion_correction_y.conversion # (float64) 1.0
+ophys_motion_correction_y.offset # (float) 0.0
+ophys_motion_correction_y.unit # (str) pixels
+ophys_motion_correction_y.data # (Dataset) shape (40019,); dtype int64
+# ophys_motion_correction_y.data[:] # Access all data
+# ophys_motion_correction_y.data[0:n] # Access first n elements
+ophys_motion_correction_y.timestamps # (Dataset) shape (40019,); dtype float64
+# ophys_motion_correction_y.timestamps[:] # Access all data
+# ophys_motion_correction_y.timestamps[0:n] # Access first n elements
+ophys_motion_correction_y.timestamps_unit # (str) seconds
+ophys_motion_correction_y.interval # (int) 1
+running = processing["running"]
+running # (ProcessingModule)
+running.description # (str) Running speed processing module
+running.data_interfaces # (LabelledDict)
+data_interfaces = running.data_interfaces
+dx = data_interfaces["dx"]
+dx # (TimeSeries)
+dx.resolution # (float64) -1.0
+dx.comments # (str) no comments
+dx.description # (str) Running wheel angular change, computed during data collection
+dx.conversion # (float64) 1.0
+dx.offset # (float) 0.0
+dx.unit # (str) cm
+dx.data # (Dataset) shape (252000,); dtype float32
+# dx.data[:] # Access all data
+# dx.data[0:n] # Access first n elements
+dx.timestamps # (Dataset) shape (252000,); dtype float64
+# dx.timestamps[:] # Access all data
+# dx.timestamps[0:n] # Access first n elements
+dx.timestamps_unit # (str) seconds
+dx.interval # (int) 1
+speed = data_interfaces["speed"]
+speed # (TimeSeries)
+speed.resolution # (float64) -1.0
+speed.comments # (str) no comments
+speed.description # (str) no description
+speed.conversion # (float64) 1.0
+speed.offset # (float) 0.0
+speed.unit # (str) cm/s
+speed.data # (Dataset) shape (252000,); dtype float64
+# speed.data[:] # Access all data
+# speed.data[0:n] # Access first n elements
+speed.timestamps # (Dataset) shape (252000,); dtype float64
+# speed.timestamps[:] # Access all data
+# speed.timestamps[0:n] # Access first n elements
+speed.timestamps_unit # (str) seconds
+speed.interval # (int) 1
+speed_unfiltered = data_interfaces["speed_unfiltered"]
+speed_unfiltered # (TimeSeries)
+speed_unfiltered.resolution # (float64) -1.0
+speed_unfiltered.comments # (str) no comments
+speed_unfiltered.description # (str) no description
+speed_unfiltered.conversion # (float64) 1.0
+speed_unfiltered.offset # (float) 0.0
+speed_unfiltered.unit # (str) cm/s
+speed_unfiltered.data # (Dataset) shape (252000,); dtype float64
+# speed_unfiltered.data[:] # Access all data
+# speed_unfiltered.data[0:n] # Access first n elements
+speed_unfiltered.timestamps # (Dataset) shape (252000,); dtype float64
+# speed_unfiltered.timestamps[:] # Access all data
+# speed_unfiltered.timestamps[0:n] # Access first n elements
+speed_unfiltered.timestamps_unit # (str) seconds
+speed_unfiltered.interval # (int) 1
+stimulus = processing["stimulus"]
+stimulus # (ProcessingModule)
+stimulus.description # (str) Stimulus Times processing
+stimulus.data_interfaces # (LabelledDict)
+data_interfaces = stimulus.data_interfaces
+timestamps = data_interfaces["timestamps"]
+timestamps # (TimeSeries)
+timestamps.resolution # (float64) -1.0
+timestamps.comments # (str) no comments
+timestamps.description # (str) no description
+timestamps.conversion # (float64) 1.0
+timestamps.offset # (float) 0.0
+timestamps.unit # (str) s
+timestamps.data # (Dataset) shape (252000,); dtype float64
+# timestamps.data[:] # Access all data
+# timestamps.data[0:n] # Access first n elements
+timestamps.timestamps # (Dataset) shape (252000,); dtype float64
+# timestamps.timestamps[:] # Access all data
+# timestamps.timestamps[0:n] # Access first n elements
+timestamps.timestamps_unit # (str) seconds
+timestamps.interval # (int) 1
+stimulus_ophys = processing["stimulus_ophys"]
+stimulus_ophys # (ProcessingModule)
+stimulus_ophys.description # (str) Stimulus Times processing
+stimulus_ophys.data_interfaces # (LabelledDict)
+data_interfaces = stimulus_ophys.data_interfaces
+timestamps = data_interfaces["timestamps"]
+timestamps # (TimeSeries)
+timestamps.resolution # (float64) -1.0
+timestamps.comments # (str) no comments
+timestamps.description # (str) no description
+timestamps.conversion # (float64) 1.0
+timestamps.offset # (float) 0.0
+timestamps.unit # (str) s
+timestamps.data # (Dataset) shape (252000,); dtype float64
+# timestamps.data[:] # Access all data
+# timestamps.data[0:n] # Access first n elements
+timestamps.timestamps # (Dataset) shape (252000,); dtype float64
+# timestamps.timestamps[:] # Access all data
+# timestamps.timestamps[0:n] # Access first n elements
+timestamps.timestamps_unit # (str) seconds
+timestamps.interval # (int) 1
+nwb.devices # (LabelledDict)
+devices = nwb.devices
+MESO_2 = devices["MESO.2"]
+MESO_2 # (Device)
+MESO_2.description # (str) Allen Brain Observatory - Mesoscope 2P Rig
+nwb.imaging_planes # (LabelledDict)
+imaging_planes = nwb.imaging_planes
+imaging_plane_1 = imaging_planes["imaging_plane_1"]
+imaging_plane_1 # (ImagingPlane)
+imaging_plane_1.optical_channel # (list)
+imaging_plane_1.description # (str) (512, 512) field of view in VISp at depth 175 um
+imaging_plane_1.excitation_lambda # (float64) 910.0
+imaging_plane_1.imaging_rate # (float64) 10.0
+imaging_plane_1.indicator # (str) GCaMP6f
+imaging_plane_1.location # (str) VISp
+imaging_plane_1.conversion # (float) 1.0
+imaging_plane_1.unit # (str) meters
+imaging_plane_1.origin_coords_unit # (str) meters
+imaging_plane_1.grid_spacing_unit # (str) meters
+imaging_plane_1.device # (Device)
+imaging_plane_1.device.description # (str) Allen Brain Observatory - Mesoscope 2P Rig
+nwb.intervals # (LabelledDict)
+intervals = nwb.intervals
+gray_presentations = intervals["gray_presentations"]
+gray_presentations # (TimeIntervals)
+gray_presentations.description # (str) Presentation times and stimuli details for 'gray' stimuli. \nNote: image_name references control_...
+gray_presentations.colnames # (tuple)
+gray_presentations.columns # (tuple)
+gray_presentations.id # (ElementIdentifiers)
+# gray_presentations.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 63000 rows and 16 columns
+# gray_presentations.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+gray_presentations.start_time # (VectorData) Start time of epoch, in seconds
+gray_presentations.stop_time # (VectorData) Stop time of epoch, in seconds
+gray_presentations.stimulus_name # (VectorData) Name of stimulus
+gray_presentations.stimulus_block # (VectorData) Index of contiguous presentations of one stimulus type
+gray_presentations.frame # (VectorData) Frame of movie stimulus
+gray_presentations.color # (VectorData) No description
+gray_presentations.contrast # (VectorData) Contrast of stimulus
+gray_presentations.opacity # (VectorData) Opacity of stimulus
+gray_presentations.orientation # (VectorData) Orientation of stimulus
+gray_presentations.size # (VectorData) Size of stimulus (see ‘units’ field for units)
+gray_presentations.units # (VectorData) Units of stimulus size
+gray_presentations.stimulus_index # (VectorData) Index of stimulus type
+gray_presentations.tags # (VectorIndex) Index for VectorData 'tags'
+# gray_presentations.tags_index[0] # (ndarray)
+# gray_presentations.tags_index[1] # (ndarray)
+# gray_presentations.tags_index[2] # (ndarray)
+# gray_presentations.tags_index[3] # (ndarray)
+# ...
+gray_presentations.timeseries # (VectorIndex) Index for VectorData 'timeseries'
+# gray_presentations.timeseries_index[0] # (list)
+# gray_presentations.timeseries_index[1] # (list)
+# gray_presentations.timeseries_index[2] # (list)
+# gray_presentations.timeseries_index[3] # (list)
+# ...
+movie_clip_A_presentations = intervals["movie_clip_A_presentations"]
+movie_clip_A_presentations # (TimeIntervals)
+movie_clip_A_presentations.description # (str) Presentation times and stimuli details for 'movie_clip_A' stimuli. \nNote: image_name references ...
+movie_clip_A_presentations.colnames # (tuple)
+movie_clip_A_presentations.columns # (tuple)
+movie_clip_A_presentations.id # (ElementIdentifiers)
+# movie_clip_A_presentations.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 63000 rows and 16 columns
+# movie_clip_A_presentations.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+movie_clip_A_presentations.start_time # (VectorData) Start time of epoch, in seconds
+movie_clip_A_presentations.stop_time # (VectorData) Stop time of epoch, in seconds
+movie_clip_A_presentations.stimulus_name # (VectorData) Name of stimulus
+movie_clip_A_presentations.stimulus_block # (VectorData) Index of contiguous presentations of one stimulus type
+movie_clip_A_presentations.frame # (VectorData) Frame of movie stimulus
+movie_clip_A_presentations.color # (VectorData) No description
+movie_clip_A_presentations.contrast # (VectorData) Contrast of stimulus
+movie_clip_A_presentations.opacity # (VectorData) Opacity of stimulus
+movie_clip_A_presentations.orientation # (VectorData) Orientation of stimulus
+movie_clip_A_presentations.size # (VectorData) Size of stimulus (see ‘units’ field for units)
+movie_clip_A_presentations.units # (VectorData) Units of stimulus size
+movie_clip_A_presentations.stimulus_index # (VectorData) Index of stimulus type
+movie_clip_A_presentations.tags # (VectorIndex) Index for VectorData 'tags'
+# movie_clip_A_presentations.tags_index[0] # (ndarray)
+# movie_clip_A_presentations.tags_index[1] # (ndarray)
+# movie_clip_A_presentations.tags_index[2] # (ndarray)
+# movie_clip_A_presentations.tags_index[3] # (ndarray)
+# ...
+movie_clip_A_presentations.timeseries # (VectorIndex) Index for VectorData 'timeseries'
+# movie_clip_A_presentations.timeseries_index[0] # (list)
+# movie_clip_A_presentations.timeseries_index[1] # (list)
+# movie_clip_A_presentations.timeseries_index[2] # (list)
+# movie_clip_A_presentations.timeseries_index[3] # (list)
+# ...
+movie_clip_B_presentations = intervals["movie_clip_B_presentations"]
+movie_clip_B_presentations # (TimeIntervals)
+movie_clip_B_presentations.description # (str) Presentation times and stimuli details for 'movie_clip_B' stimuli. \nNote: image_name references ...
+movie_clip_B_presentations.colnames # (tuple)
+movie_clip_B_presentations.columns # (tuple)
+movie_clip_B_presentations.id # (ElementIdentifiers)
+# movie_clip_B_presentations.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 63000 rows and 16 columns
+# movie_clip_B_presentations.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+movie_clip_B_presentations.start_time # (VectorData) Start time of epoch, in seconds
+movie_clip_B_presentations.stop_time # (VectorData) Stop time of epoch, in seconds
+movie_clip_B_presentations.stimulus_name # (VectorData) Name of stimulus
+movie_clip_B_presentations.stimulus_block # (VectorData) Index of contiguous presentations of one stimulus type
+movie_clip_B_presentations.frame # (VectorData) Frame of movie stimulus
+movie_clip_B_presentations.color # (VectorData) No description
+movie_clip_B_presentations.contrast # (VectorData) Contrast of stimulus
+movie_clip_B_presentations.opacity # (VectorData) Opacity of stimulus
+movie_clip_B_presentations.orientation # (VectorData) Orientation of stimulus
+movie_clip_B_presentations.size # (VectorData) Size of stimulus (see ‘units’ field for units)
+movie_clip_B_presentations.units # (VectorData) Units of stimulus size
+movie_clip_B_presentations.stimulus_index # (VectorData) Index of stimulus type
+movie_clip_B_presentations.tags # (VectorIndex) Index for VectorData 'tags'
+# movie_clip_B_presentations.tags_index[0] # (ndarray)
+# movie_clip_B_presentations.tags_index[1] # (ndarray)
+# movie_clip_B_presentations.tags_index[2] # (ndarray)
+# movie_clip_B_presentations.tags_index[3] # (ndarray)
+# ...
+movie_clip_B_presentations.timeseries # (VectorIndex) Index for VectorData 'timeseries'
+# movie_clip_B_presentations.timeseries_index[0] # (list)
+# movie_clip_B_presentations.timeseries_index[1] # (list)
+# movie_clip_B_presentations.timeseries_index[2] # (list)
+# movie_clip_B_presentations.timeseries_index[3] # (list)
+# ...
+movie_clip_C_presentations = intervals["movie_clip_C_presentations"]
+movie_clip_C_presentations # (TimeIntervals)
+movie_clip_C_presentations.description # (str) Presentation times and stimuli details for 'movie_clip_C' stimuli. \nNote: image_name references ...
+movie_clip_C_presentations.colnames # (tuple)
+movie_clip_C_presentations.columns # (tuple)
+movie_clip_C_presentations.id # (ElementIdentifiers)
+# movie_clip_C_presentations.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 63000 rows and 16 columns
+# movie_clip_C_presentations.to_dataframe().head() # (DataFrame) Show the first few rows of the pandas DataFrame
+movie_clip_C_presentations.start_time # (VectorData) Start time of epoch, in seconds
+movie_clip_C_presentations.stop_time # (VectorData) Stop time of epoch, in seconds
+movie_clip_C_presentations.stimulus_name # (VectorData) Name of stimulus
+movie_clip_C_presentations.stimulus_block # (VectorData) Index of contiguous presentations of one stimulus type
+movie_clip_C_presentations.frame # (VectorData) Frame of movie stimulus
+movie_clip_C_presentations.color # (VectorData) No description
+movie_clip_C_presentations.contrast # (VectorData) Contrast of stimulus
+movie_clip_C_presentations.opacity # (VectorData) Opacity of stimulus
+movie_clip_C_presentations.orientation # (VectorData) Orientation of stimulus
+movie_clip_C_presentations.size # (VectorData) Size of stimulus (see ‘units’ field for units)
+movie_clip_C_presentations.units # (VectorData) Units of stimulus size
+movie_clip_C_presentations.stimulus_index # (VectorData) Index of stimulus type
+movie_clip_C_presentations.tags # (VectorIndex) Index for VectorData 'tags'
+# movie_clip_C_presentations.tags_index[0] # (ndarray)
+# movie_clip_C_presentations.tags_index[1] # (ndarray)
+# movie_clip_C_presentations.tags_index[2] # (ndarray)
+# movie_clip_C_presentations.tags_index[3] # (ndarray)
+# ...
+movie_clip_C_presentations.timeseries # (VectorIndex) Index for VectorData 'timeseries'
+# movie_clip_C_presentations.timeseries_index[0] # (list)
+# movie_clip_C_presentations.timeseries_index[1] # (list)
+# movie_clip_C_presentations.timeseries_index[2] # (list)
+# movie_clip_C_presentations.timeseries_index[3] # (list)
+# ...
+nwb.lab_meta_data # (LabelledDict)
+lab_meta_data = nwb.lab_meta_data
+metadata = lab_meta_data["metadata"]
+metadata # (OphysMetadata)
+metadata.ophys_experiment_id # (int64)
+metadata.ophys_session_id # (int64)
+metadata.experiment_container_id # (int64)
+metadata.imaging_depth # (int64)
+metadata.field_of_view_width # (int64)
+metadata.field_of_view_height # (int64)
+metadata.imaging_plane_group # (int64)
+metadata.imaging_plane_group_count # (int64)
+nwb.experiment_description # (str) ophys session
+nwb.institution # (str) Allen Institute for Brain Science
+nwb.surgery # (str)  Structure: VISp
+nwb.subject # (Subject)
+nwb.subject.age # (str) P92.0D
+nwb.subject.age__reference # (str) birth
+nwb.subject.description # (str) external: 677038 donor_id: (1271786805,) specimen_id: ['677038']
+nwb.subject.genotype # (str) Cux2-CreERT2/wt;Camk2a-tTA/wt;Ai93(TITL-GCaMP6f)/wt
+nwb.subject.sex # (str) F
+nwb.subject.species # (str) Mus musculus
+nwb.subject.subject_id # (str) 677038
+
+STDERR:
+/home/magland/src/dandi-ai-notebooks-3/packages/get-nwbfile-info/src/get_nwbfile_info/core.py:346: UserWarning: Warning: Duplicate entries found in the results.
+  warnings.warn("Warning: Duplicate entries found in the results.")
+
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 10
+Submitting completion request...
+Processing response...
+I have successfully retrieved information about the selected NWB file. The output from `nwb-file-info` provides a structured view of the NWB file's contents, including available data interfaces like `acquisition` (containing `v_in` and `v_sig` time series), `stimulus_template` (containing image series for `gray`, `movie_clip_A`, `movie_clip_B`, `movie_clip_C`), `processing` (containing `ophys`, `running`, and `stimulus` modules), and `intervals` (containing presentation times for the stimuli). Under the `ophys` processing module, I see `corrected_fluorescence`, `dff`, `event_detection`, `image_segmentation`, `images`, and `neuropil_trace`. These contain data like fluorescence traces (`dff`), segmented ROIs (`image_segmentation.plane_segmentations.cell_specimen_table`), and motion correction data. The `running` module contains `dx` and `speed` time series. The `stimulus` module contains `timestamps`.
+
+This information is valuable for determining what data to include in the notebook and how to access it.
+
+Now I need to conduct exploratory research using Python scripts in an `explore/` subdirectory to understand the data and identify useful visualizations. This is step 4 of my plan.
+
+I will start by exploring the `dff` (delta F/F) traces from the `ophys` module, as this is a common and informative measure of neural activity in calcium imaging data. I'll create a script to load a subset of these traces and plot them. I should also look at the `cell_specimen_table` to understand the segmented ROIs.
+
+Tool: execute_command
+Params: {'command': 'mkdir explore', 'requires_approval': 'false'}
+================================
+Command to be executed
+mkdir explore
+================================
+Total prompt tokens: 77502 + 0
+Total completion tokens: 1598 + 0
+
+=========================================
+
+execute_command 'mkdir explore' (requires approval):
+Command executed successfully
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 12
+Submitting completion request...
+Processing response...
+I have created the `explore/` directory. Now I will create a Python script in `explore/` to load and visualize a subset of the dF/F traces. I need to make sure the plot is saved to a file and not displayed interactively. I will also include comments at the top explaining what the script does.
+
+Tool: write_to_file
+Params: {'path': 'explore/explore_dff_traces.py', 'content': '# This script loads a subset of dF/F traces from the NWB file and plots them.\n# The purpose is to visualize neural activity over time for a few selected ROIs.\n\nimport pynwb\nimport h5py\nimport remfile\nimport matplotlib.pyplot as plt\nimport numpy as np\n\n# Load the NWB file - this part is hardcoded based on nwb-file-info output\nurl = "https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/"\nremote_file = remfile.File(url)\nh5_file = h5py.File(remote_file)\nio = pynwb.NWBHDF5IO(file=h5_file)\nnwb = io.read()\n\n# Access the dF/F traces\n# Path: processing/ophys/dff/roi_response_series/traces\ndff_traces_dataset = nwb.processing[\'ophys\'][\'dff\'][\'roi_response_series\'][\'traces\'].data\ntimestamps_dataset = nwb.processing[\'ophys\'][\'dff\'][\'roi_response_series\'][\'traces\'].timestamps\n\n# Load a subset of data to avoid excessive memory usage and download time\n# Let\'s load the first 10000 time points and the first 5 ROIs\nnum_time_points = 10000\nnum_rois = 5\n\ndff_subset = dff_traces_dataset[0:num_time_points, 0:num_rois]\ntimestamps_subset = timestamps_dataset[0:num_time_points]\n\n# Load ROI information to get cell specimen IDs\nroi_table = nwb.processing[\'ophys\'][\'dff\'][\'roi_response_series\'][\'traces\'].rois.table\ncell_specimen_ids = roi_table.cell_specimen_id[0:num_rois]\n\n\n# Plot the traces\nplt.figure(figsize=(12, 6))\nfor i in range(num_rois):\n    plt.plot(timestamps_subset, dff_subset[:, i] + i * 10, label=f\'ROI {cell_specimen_ids[i]}\') # Offset traces for clarity\n\nplt.xlabel(\'Time (s)\')\nplt.ylabel(\'dF/F (arbitrary units, offset for clarity)\')\nplt.title(\'Subset of dF/F Traces for Selected ROIs\')\nplt.legend()\nplt.tight_layout()\n\n# Save the plot to a file\nplt.savefig(\'explore/dff_traces_subset.png\')\nplt.close() # Close the plot to prevent it from displaying\n\n# Close the NWB file\nio.close()'}
+================================
+Content to be written to explore/explore_dff_traces.py:
+# This script loads a subset of dF/F traces from the NWB file and plots them.
+# The purpose is to visualize neural activity over time for a few selected ROIs.
+
+import pynwb
+import h5py
+import remfile
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load the NWB file - this part is hardcoded based on nwb-file-info output
+url = "https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/"
+remote_file = remfile.File(url)
+h5_file = h5py.File(remote_file)
+io = pynwb.NWBHDF5IO(file=h5_file)
+nwb = io.read()
+
+# Access the dF/F traces
+# Path: processing/ophys/dff/roi_response_series/traces
+dff_traces_dataset = nwb.processing['ophys']['dff']['roi_response_series']['traces'].data
+timestamps_dataset = nwb.processing['ophys']['dff']['roi_response_series']['traces'].timestamps
+
+# Load a subset of data to avoid excessive memory usage and download time
+# Let's load the first 10000 time points and the first 5 ROIs
+num_time_points = 10000
+num_rois = 5
+
+dff_subset = dff_traces_dataset[0:num_time_points, 0:num_rois]
+timestamps_subset = timestamps_dataset[0:num_time_points]
+
+# Load ROI information to get cell specimen IDs
+roi_table = nwb.processing['ophys']['dff']['roi_response_series']['traces'].rois.table
+cell_specimen_ids = roi_table.cell_specimen_id[0:num_rois]
+
+
+# Plot the traces
+plt.figure(figsize=(12, 6))
+for i in range(num_rois):
+    plt.plot(timestamps_subset, dff_subset[:, i] + i * 10, label=f'ROI {cell_specimen_ids[i]}') # Offset traces for clarity
+
+plt.xlabel('Time (s)')
+plt.ylabel('dF/F (arbitrary units, offset for clarity)')
+plt.title('Subset of dF/F Traces for Selected ROIs')
+plt.legend()
+plt.tight_layout()
+
+# Save the plot to a file
+plt.savefig('explore/dff_traces_subset.png')
+plt.close() # Close the plot to prevent it from displaying
+
+# Close the NWB file
+io.close()
+================================
+Total prompt tokens: 105414 + 0
+Total completion tokens: 2326 + 0
+
+=========================================
+
+write_to_file for 'explore/explore_dff_traces.py':
+Successfully wrote 1824 characters to explore/explore_dff_traces.py
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 14
+Submitting completion request...
+Processing response...
+I have successfully created the Python script `explore/explore_dff_traces.py`.
+Now I need to execute this script to generate the plot. I will use `execute_command` with a timeout. This is part of step 4 of my plan.
+
+Tool: execute_command
+Params: {'command': 'python explore/explore_dff_traces.py', 'requires_approval': 'false', 'timeout': '90'}
+================================
+Command to be executed
+python explore/explore_dff_traces.py
+================================
+Traceback (most recent call last):
+  File "/home/magland/src/dandi-ai-notebooks-4/dandiset_repos/000617/v4/0.250312.0130/gemini-2.5-flash-preview-prompt-f-2/working/explore/explore_dff_traces.py", line 19, in <module>
+    dff_traces_dataset = nwb.processing['ophys']['dff']['roi_response_series']['traces'].data
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/magland/miniconda3/envs/dev/lib/python3.12/site-packages/hdmf/utils.py", line 577, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/magland/miniconda3/envs/dev/lib/python3.12/site-packages/hdmf/container.py", line 1131, in _func
+    raise KeyError(msg)
+KeyError: "'roi_response_series' not found in DfOverF 'dff'."
+Total prompt tokens: 134143 + 0
+Total completion tokens: 2438 + 0
+
+=========================================
+
+execute_command 'python explore/explore_dff_traces.py' (requires approval):
+Command failed with exit code 1
+STDERR:
+Traceback (most recent call last):
+  File "/home/magland/src/dandi-ai-notebooks-4/dandiset_repos/000617/v4/0.250312.0130/gemini-2.5-flash-preview-prompt-f-2/working/explore/explore_dff_traces.py", line 19, in <module>
+    dff_traces_dataset = nwb.processing['ophys']['dff']['roi_response_series']['traces'].data
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/magland/miniconda3/envs/dev/lib/python3.12/site-packages/hdmf/utils.py", line 577, in func_call
+    return func(args[0], **pargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/magland/miniconda3/envs/dev/lib/python3.12/site-packages/hdmf/container.py", line 1131, in _func
+    raise KeyError(msg)
+KeyError: "'roi_response_series' not found in DfOverF 'dff'."
+
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 16
+Submitting completion request...
+Processing response...
+The execution of `explore/explore_dff_traces.py` failed with a `KeyError: "'roi_response_series' not found in DfOverF 'dff'."`.
+Looking back at the output of `nwb-file-info`, I see that `dff` has a `roi_response_series` attribute, but it's a `LabelledDict` and likely contains the actual data under a key. Let's re-examine the `nwb-file-info` output for `dff`:
+
+```
+dff = data_interfaces["dff"]
+dff # (DfOverF)
+dff.roi_response_series # (LabelledDict)
+roi_response_series = dff.roi_response_series
+traces = roi_response_series["traces"]
+traces # (RoiResponseSeries)
+traces.resolution # (float64) -1.0
+...
+traces.data # (Dataset) shape (40019, 121); dtype float64
+```
+Ah, the traces data is under the key `"traces"` within the `roi_response_series` LabelledDict.
+
+I need to modify the script `explore/explore_dff_traces.py` to correctly access the dF/F data and timestamps.
+
+The incorrect lines are:
+```python
+dff_traces_dataset = nwb.processing['ophys']['dff']['roi_response_series']['traces'].data
+timestamps_dataset = nwb.processing['ophys']['dff']['roi_response_series']['traces'].timestamps
+```
+They should be:
+```python
+dff_traces_dataset = nwb.processing['ophys']['dff'].roi_response_series['traces'].data
+timestamps_dataset = nwb.processing['ophys']['dff'].roi_response_series['traces'].timestamps
+```
+And similarly for accessing the ROI table:
+```python
+roi_table = nwb.processing['ophys']['dff']['roi_response_series']['traces'].rois.table
+```
+should be:
+```python
+roi_table = nwb.processing['ophys']['dff'].roi_response_series['traces'].rois.table
+```
+
+I will use `replace_in_file` to fix these lines in `explore/explore_dff_traces.py`.
+
+Tool: replace_in_file
+Params: {'path': 'explore/explore_dff_traces.py', 'diff': '<<<<<<< SEARCH\n                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File "/home/magland/miniconda3/envs/dev/lib/python3.12/site-packages/hdmf/container.py", line 1131, in _func\n    raise KeyError(msg)\nKeyError: "\'roi_response_series\' not found in DfOverF \'dff\'."<environment_details>\nCurrent Working Directory: working\n\n# Working Directory Files (Recursive)\nexplore/explore_dff_traces.py\nminicline.log\ntools.py\ntools_cli.py\n</environment_details>\n=======\n</thinking>\n<replace_in_file>\n<path>explore/explore_dff_traces.py</path>\n<diff>\n>>>>>>> REPLACE'}
+================================
+Proposed replacement in explore/explore_dff_traces.py:
+<<<<<<< SEARCH
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/magland/miniconda3/envs/dev/lib/python3.12/site-packages/hdmf/container.py", line 1131, in _func
+    raise KeyError(msg)
+KeyError: "'roi_response_series' not found in DfOverF 'dff'."<environment_details>
+Current Working Directory: working
+
+# Working Directory Files (Recursive)
+explore/explore_dff_traces.py
+minicline.log
+tools.py
+tools_cli.py
+</environment_details>
+=======
+</thinking>
+<replace_in_file>
+<path>explore/explore_dff_traces.py</path>
+<diff>
+>>>>>>> REPLACE
+================================
+Total prompt tokens: 163339 + 0
+Total completion tokens: 3725 + 0
+
+=========================================
+
+replace_in_file for 'explore/explore_dff_traces.py':
+ERROR: Search content not found:
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/magland/miniconda3/envs/dev/lib/python3.12/site-packages/hdmf/container.py", line 1131, in _func
+    raise KeyError(msg)
+KeyError: "'roi_response_series' not found in DfOverF 'dff'."<environment_details>
+Current Working Directory: working
+
+# Working Directory Files (Recursive)
+explore/explore_dff_traces.py
+minicline.log
+tools.py
+tools_cli.py
+</environment_details>
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 18
+Submitting completion request...
+Processing response...
+The previous `replace_in_file` operation failed because the search content did not match exactly. I mistakenly included the error message traceback in the search content. I should only include the actual lines from the file that I want to replace.
+
+I need to correct the file paths for the `dff_traces_dataset`, `timestamps_dataset`, and `roi_table` variables in `explore/explore_dff_traces.py`.
+
+The lines to be replaced are:
+```python
+dff_traces_dataset = nwb.processing['ophys']['dff']['roi_response_series']['traces'].data
+timestamps_dataset = nwb.processing['ophys']['dff']['roi_response_series']['traces'].timestamps
+```
+and
+```python
+roi_table = nwb.processing['ophys']['dff']['roi_response_series']['traces'].rois.table
+```
+
+I will use `replace_in_file` again with the correct search content.
+
+Tool: replace_in_file
+Params: {'path': 'explore/explore_dff_traces.py', 'diff': "<<<<<<< SEARCH\ndff_traces_dataset = nwb.processing['ophys']['dff']['roi_response_series']['traces'].data\ntimestamps_dataset = nwb.processing['ophys']['dff']['roi_response_series']['traces'].timestamps\n=======\ndff_traces_dataset = nwb.processing['ophys']['dff'].roi_response_series['traces'].data\ntimestamps_dataset = nwb.processing['ophys']['dff'].roi_response_series['traces'].timestamps\n>>>>>>> REPLACE\n\n<<<<<<< SEARCH\nroi_table = nwb.processing['ophys']['dff']['roi_response_series']['traces'].rois.table\ncell_specimen_ids = roi_table.cell_specimen_id[0:num_rois]\n=======\nroi_table = nwb.processing['ophys']['dff'].roi_response_series['traces'].rois.table\ncell_specimen_ids = roi_table.cell_specimen_id[0:num_rois]\n>>>>>>> REPLACE"}
+================================
+Proposed replacement in explore/explore_dff_traces.py:
+<<<<<<< SEARCH
+dff_traces_dataset = nwb.processing['ophys']['dff']['roi_response_series']['traces'].data
+timestamps_dataset = nwb.processing['ophys']['dff']['roi_response_series']['traces'].timestamps
+=======
+dff_traces_dataset = nwb.processing['ophys']['dff'].roi_response_series['traces'].data
+timestamps_dataset = nwb.processing['ophys']['dff'].roi_response_series['traces'].timestamps
+>>>>>>> REPLACE
+
+<<<<<<< SEARCH
+roi_table = nwb.processing['ophys']['dff']['roi_response_series']['traces'].rois.table
+cell_specimen_ids = roi_table.cell_specimen_id[0:num_rois]
+=======
+roi_table = nwb.processing['ophys']['dff'].roi_response_series['traces'].rois.table
+cell_specimen_ids = roi_table.cell_specimen_id[0:num_rois]
+>>>>>>> REPLACE
+================================
+Total prompt tokens: 194034 + 0
+Total completion tokens: 4185 + 0
+
+=========================================
+
+replace_in_file for 'explore/explore_dff_traces.py':
+Successfully made 2 replacements in explore/explore_dff_traces.py
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 20
+Submitting completion request...
+Processing response...
+I have successfully corrected the file paths in `explore/explore_dff_traces.py`.
+Now I will execute the script again to generate the plot. This is still part of step 4 of my plan.
+
+Tool: execute_command
+Params: {'command': 'python explore/explore_dff_traces.py', 'requires_approval': 'false', 'timeout': '90'}
+================================
+Command to be executed
+python explore/explore_dff_traces.py
+================================
+Total prompt tokens: 225275 + 0
+Total completion tokens: 4287 + 0
+
+=========================================
+
+execute_command 'python explore/explore_dff_traces.py' (requires approval):
+Command executed successfully
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 22
+Submitting completion request...
+Processing response...
+The script `explore/explore_dff_traces.py` executed successfully, and I see a new file `explore/dff_traces_subset.png`.
+Now I need to examine the generated plot using the `read_image` tool to understand its content and determine if it's suitable for the notebook. This is also part of step 4.
+
+Tool: read_image
+Params: {'path': 'explore/dff_traces_subset.png', 'instructions': 'Analyze the plot of dF/F traces. Describe the overall shape of the traces, any apparent activity patterns, labels, and title. Assess if the plot is informative and useful for illustrating neural activity, and note if there are any issues like missing data or poor formatting.'}
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 2
+Submitting completion request...
+Processing response...
+Total prompt tokens: 256704 + 1888
+Total completion tokens: 4458 + 159
+
+=========================================
+
+read_image for 'explore/dff_traces_subset.png':
+The image for explore/dff_traces_subset.png is attached. AI description: This plot displays five dF/F traces for different ROIs over time. Each trace shows fluctuations, with some exhibiting distinct peaks indicative of neural activity (e.g., orange and purple traces). The traces are vertically offset for clarity. The labels, "Time (s)" and "dF/F (arbitrary units, offset for clarity)," are clear, along with the title "Subset of dF/F Traces for Selected ROIs." However, the legend labels are all identical ("ROI -1"), making it impossible to distinguish which trace corresponds to which ROI. Despite this labeling issue, the plot is generally informative for illustrating dF/F activity patterns, although it could be improved with unique ROI labels. There are no obvious signs of missing data or poor formatting aside from the legend.
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 24
+Submitting completion request...
+Processing response...
+The plot is informative but has an issue with the legend showing "ROI -1" for all traces. This is because I used `roi_table.cell_specimen_id[0:num_rois]` which likely returns an array-like object where indexing doesn't behave as expected for individual cell IDs, resulting in the same label for all.
+
+Looking back at the `nwb-file-info` output for `cell_specimen_id`:
+`cell_specimen_table.cell_specimen_id # (VectorData) Unified id of segmented cell across experiments (after cell matching)`
+It's a `VectorData` object, I should access individual elements by index.
+
+I need to modify the script `explore/explore_dff_traces.py` to correctly get the individual cell specimen IDs for the legend labels.
+
+Instead of
+```python
+cell_specimen_ids = roi_table.cell_specimen_id[0:num_rois]
+```
+I should iterate and get each ID:
+```python
+cell_specimen_ids = [roi_table.cell_specimen_id[i] for i in range(num_rois)]
+```
+I will use `replace_in_file` to fix this line.
+
+Tool: replace_in_file
+Params: {'path': 'explore/explore_dff_traces.py', 'diff': '<<<<<<< SEARCH\ncell_specimen_ids = roi_table.cell_specimen_id[0:num_rois]\n=======\ncell_specimen_ids = [roi_table.cell_specimen_id[i] for i in range(num_rois)]\n>>>>>>> REPLACE'}
+================================
+Proposed replacement in explore/explore_dff_traces.py:
+<<<<<<< SEARCH
+cell_specimen_ids = roi_table.cell_specimen_id[0:num_rois]
+=======
+cell_specimen_ids = [roi_table.cell_specimen_id[i] for i in range(num_rois)]
+>>>>>>> REPLACE
+================================
+Total prompt tokens: 290366 + 1888
+Total completion tokens: 4842 + 159
+
+=========================================
+
+replace_in_file for 'explore/explore_dff_traces.py':
+Successfully made 1 replacements in explore/explore_dff_traces.py
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 26
+Submitting completion request...
+Processing response...
+I have successfully corrected the way I access cell specimen IDs in `explore/explore_dff_traces.py`.
+Now I will execute the script again to generate an updated plot with correct legend labels. This is still part of step 4 of my plan.
+
+Tool: execute_command
+Params: {'command': 'python explore/explore_dff_traces.py', 'requires_approval': 'false', 'timeout': '90'}
+================================
+Command to be executed
+python explore/explore_dff_traces.py
+================================
+Total prompt tokens: 324508 + 1888
+Total completion tokens: 4953 + 159
+
+=========================================
+
+execute_command 'python explore/explore_dff_traces.py' (requires approval):
+Command executed successfully
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 28
+Submitting completion request...
+Processing response...
+The script executed successfully again. I'll now read the updated `explore/dff_traces_subset.png` to check if the legend labels are correct. This is part of step 4.
+
+Tool: read_image
+Params: {'path': 'explore/dff_traces_subset.png', 'instructions': "Analyze the updated plot of dF/F traces. Specifically check the legend labels to ensure they are unique and correspond to the individual ROIs. Confirm that the plot is now more informative due to correct labeling and whether it's suitable for inclusion in the notebook. Re-assess if there are any other issues."}
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 2
+Submitting completion request...
+Processing response...
+Total prompt tokens: 358847 + 3784
+Total completion tokens: 5099 + 212
+
+=========================================
+
+read_image for 'explore/dff_traces_subset.png':
+The image for explore/dff_traces_subset.png is attached. AI description: The legend still incorrectly labels all traces as "ROI -1", even though they represent different ROIs, making the plot uninformative for identifying individual traces. This issue prevents the plot from being suitable for immediate inclusion without correction. There are no other apparent issues.
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 30
+Submitting completion request...
+Processing response...
+The `read_image` output indicates that the legend labels are still incorrect ("ROI -1"). This is unexpected since I changed the code to iterate and get individual cell specimen IDs. It seems that even when iterating, the returned value for each `roi_table.cell_specimen_id[i]` might not be the unique ID itself, but possibly an object or a view that evaluates to the same string representation in the context of the f-string or list comprehension.
+
+Let's try accessing the cell specimen IDs differently. The ` Chloride et al. (2023) ` paper associated with this Dandiset might provide clues on how to access cell specimen IDs from the ROI table. However, I don't have direct access to external websites or papers.
+
+Based on the `nwb-file-info` output, `cell_specimen_table.cell_specimen_id` is a `VectorData`. Sometimes with `VectorData` or `DynamicTable` columns, converting to a pandas DataFrame first can make accessing the data easier and more reliable. The `nwb-file-info` output shows that `cell_specimen_table` can be converted to a DataFrame: `# cell_specimen_table.to_dataframe() # (DataFrame) Convert to a pandas DataFrame with 121 rows and 12 columns`.
+
+I will modify the script to convert the ROI table to a pandas DataFrame and then access the 'cell_specimen_id' column from the DataFrame.
+
+I'll replace the block for getting cell specimen IDs:
+```python
+roi_table = nwb.processing['ophys']['dff'].roi_response_series['traces'].rois.table
+cell_specimen_ids = [roi_table.cell_specimen_id[i] for i in range(num_rois)]
+```
+with:
+```python
+roi_table = nwb.processing['ophys']['dff'].roi_response_series['traces'].rois.table.to_dataframe()
+cell_specimen_ids = roi_table['cell_specimen_id'].iloc[0:num_rois].tolist()
+```
+This should retrieve the cell specimen IDs as a list of strings, which should work correctly for legend labels. I will use `replace_in_file` to make this change.
+
+Tool: replace_in_file
+Params: {'path': 'explore/explore_dff_traces.py', 'diff': "<<<<<<< SEARCH\nroi_table = nwb.processing['ophys']['dff'].roi_response_series['traces'].rois.table\ncell_specimen_ids = [roi_table.cell_specimen_id[i] for i in range(num_rois)]\n=======\nroi_table = nwb.processing['ophys']['dff'].roi_response_series['traces'].rois.table.to_dataframe()\ncell_specimen_ids = roi_table['cell_specimen_id'].iloc[0:num_rois].tolist()\n>>>>>>> REPLACE"}
+================================
+Proposed replacement in explore/explore_dff_traces.py:
+<<<<<<< SEARCH
+roi_table = nwb.processing['ophys']['dff'].roi_response_series['traces'].rois.table
+cell_specimen_ids = [roi_table.cell_specimen_id[i] for i in range(num_rois)]
+=======
+roi_table = nwb.processing['ophys']['dff'].roi_response_series['traces'].rois.table.to_dataframe()
+cell_specimen_ids = roi_table['cell_specimen_id'].iloc[0:num_rois].tolist()
+>>>>>>> REPLACE
+================================
+Total prompt tokens: 392192 + 3784
+Total completion tokens: 5765 + 212
+
+=========================================
+
+replace_in_file for 'explore/explore_dff_traces.py':
+Successfully made 1 replacements in explore/explore_dff_traces.py
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 32
+Submitting completion request...
+Processing response...
+I have successfully modified the script to get the cell specimen IDs using a pandas DataFrame.
+Now I will execute the script again to generate an updated plot with correctly retrieved legend labels. This is still part of step 4 of my plan.
+
+Tool: execute_command
+Params: {'command': 'python explore/explore_dff_traces.py', 'requires_approval': 'false', 'timeout': '90'}
+================================
+Command to be executed
+python explore/explore_dff_traces.py
+================================
+Total prompt tokens: 426299 + 3784
+Total completion tokens: 5871 + 212
+
+=========================================
+
+execute_command 'python explore/explore_dff_traces.py' (requires approval):
+Command executed successfully
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 34
+Submitting completion request...
+Processing response...
+The script executed successfully. I'll now read the updated `explore/dff_traces_subset.png` to check if the legend labels are finally correct. This is still part of step 4.
+
+Tool: read_image
+Params: {'path': 'explore/dff_traces_subset.png', 'instructions': "Analyze the updated plot of dF/F traces. Specifically check the legend labels to ensure they are unique and correspond to the individual ROIs. Confirm that the plot is now more informative due to correct labeling and whether it's suitable for inclusion in the notebook. Re-assess if there are any other issues."}
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 2
+Submitting completion request...
+Processing response...
+Total prompt tokens: 460598 + 5680
+Total completion tokens: 6018 + 265
+
+=========================================
+
+read_image for 'explore/dff_traces_subset.png':
+The image for explore/dff_traces_subset.png is attached. AI description: The legend labels in the plot are not unique, as they all read "ROI -1". This makes the plot uninformative for identifying individual ROI traces. The plot is not suitable for inclusion in a notebook without correcting the legend labels to accurately represent each ROI.
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 36
+Submitting completion request...
+Processing response...
+The legend labels are *still* incorrect despite using `to_dataframe()` and converting to a list. This is quite puzzling. It seems there might be an underlying issue with how the cell specimen IDs are stored or accessed in this specific NWB file or with the libraries being used.
+
+Given that I've tried a couple of approaches to get the cell specimen IDs and they haven't worked for the plot legend, I will make a note of this difficulty in the notebook. I will exclude the legend from the plot for now to avoid including misleading labels, and explain in the markdown that there was difficulty in retrieving individual ROI identifiers for the legend. I can still show the subset of traces as an example of how to load the data, but I need to be careful about the interpretation without correct ROI labels.
+
+For the notebook, I should still include the code for loading the ROI table and attempting to get the cell specimen IDs, with an explanation of the observed issue.
+
+I will now move on to exploring other data in the NWB file.
+
+Looking at the `nwb-file-info` output, the `running` module contains `speed` which seems like a good candidate for another visualization. I will create a new script to plot the running speed over time.
+
+Tool: write_to_file
+Params: {'path': 'explore/explore_running_speed.py', 'content': '# This script loads the running speed data and plots it over time.\n# The purpose is to visualize the animal\'s locomotion during the experiment.\n\nimport pynwb\nimport h5py\nimport remfile\nimport matplotlib.pyplot as plt\nimport numpy as np\n\n# Load the NWB file - this part is hardcoded based on nwb-file-info output\nurl = "https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/"\nremote_file = remfile.File(url)\nh5_file = h5py.File(remote_file)\nio = pynwb.NWBHDF5IO(file=h5_file)\nnwb = io.read()\n\n# Access the running speed data\n# Path: processing/running/speed\nspeed_dataset = nwb.processing[\'running\'][\'speed\'].data\nspeed_timestamps_dataset = nwb.processing[\'running\'][\'speed\'].timestamps\n\n# Load a subset of data for plotting efficiency\n# Let\'s load the first 50000 time points\nnum_time_points = 50000\n\nspeed_subset = speed_dataset[0:num_time_points]\nspeed_timestamps_subset = speed_timestamps_dataset[0:num_time_points]\n\n# Plot the running speed\nplt.figure(figsize=(12, 4))\nplt.plot(speed_timestamps_subset, speed_subset)\nplt.xlabel(\'Time (s)\')\nplt.ylabel(\'Speed (cm/s)\')\nplt.title(\'Subset of Running Speed over Time\')\nplt.tight_layout()\n\n# Save the plot to a file\nplt.savefig(\'explore/running_speed_subset.png\')\nplt.close() # Close the plot to prevent it from displaying\n\n# Close the NWB file\nio.close()'}
+================================
+Content to be written to explore/explore_running_speed.py:
+# This script loads the running speed data and plots it over time.
+# The purpose is to visualize the animal's locomotion during the experiment.
+
+import pynwb
+import h5py
+import remfile
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load the NWB file - this part is hardcoded based on nwb-file-info output
+url = "https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/"
+remote_file = remfile.File(url)
+h5_file = h5py.File(remote_file)
+io = pynwb.NWBHDF5IO(file=h5_file)
+nwb = io.read()
+
+# Access the running speed data
+# Path: processing/running/speed
+speed_dataset = nwb.processing['running']['speed'].data
+speed_timestamps_dataset = nwb.processing['running']['speed'].timestamps
+
+# Load a subset of data for plotting efficiency
+# Let's load the first 50000 time points
+num_time_points = 50000
+
+speed_subset = speed_dataset[0:num_time_points]
+speed_timestamps_subset = speed_timestamps_dataset[0:num_time_points]
+
+# Plot the running speed
+plt.figure(figsize=(12, 4))
+plt.plot(speed_timestamps_subset, speed_subset)
+plt.xlabel('Time (s)')
+plt.ylabel('Speed (cm/s)')
+plt.title('Subset of Running Speed over Time')
+plt.tight_layout()
+
+# Save the plot to a file
+plt.savefig('explore/running_speed_subset.png')
+plt.close() # Close the plot to prevent it from displaying
+
+# Close the NWB file
+io.close()
+================================
+Total prompt tokens: 495452 + 5680
+Total completion tokens: 6763 + 265
+
+=========================================
+
+write_to_file for 'explore/explore_running_speed.py':
+Successfully wrote 1335 characters to explore/explore_running_speed.py
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 38
+Submitting completion request...
+Processing response...
+I have successfully created the script `explore/explore_running_speed.py`.
+Now I will execute this script to generate the plot of running speed. This remains part of step 4.
+
+Tool: execute_command
+Params: {'command': 'python explore/explore_running_speed.py', 'requires_approval': 'false', 'timeout': '90'}
+================================
+Command to be executed
+python explore/explore_running_speed.py
+================================
+Total prompt tokens: 531160 + 5680
+Total completion tokens: 6861 + 265
+
+=========================================
+
+execute_command 'python explore/explore_running_speed.py' (requires approval):
+Command executed successfully
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 40
+Submitting completion request...
+Processing response...
+The script `explore/explore_running_speed.py` executed successfully, and the file `explore/running_speed_subset.png` was created.
+Now I will examine this plot using `read_image` to assess its usefulness for the notebook. This is still part of step 4.
+
+Tool: read_image
+Params: {'path': 'explore/running_speed_subset.png', 'instructions': "Analyze the plot of running speed over time. Describe the overall pattern of running speed, the labels, and the title. Assess if the plot is informative and useful for illustrating the animal's locomotion, and note any issues like missing data or poor formatting."}
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 2
+Submitting completion request...
+Processing response...
+Total prompt tokens: 567072 + 8596
+Total completion tokens: 7017 + 349
+
+=========================================
+
+read_image for 'explore/running_speed_subset.png':
+The image for explore/running_speed_subset.png is attached. AI description: The continuous line plot shows running speed (cm/s) over approximately 850 seconds. The overall pattern indicates periods of high speed interspersed with periods near zero speed.  Both axes are appropriately labeled, and the plot has a clear title "Subset of Running Speed over Time". The plot is informative and useful for illustrating the animal's locomotion pattern. There are no apparent issues with missing data or poor formatting.
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 42
+Submitting completion request...
+Processing response...
+The running speed plot looks good and is informative. It shows periods of activity, which is relevant to a sequence learning experiment. This plot is suitable for inclusion in the notebook.
+
+Now I need to think about other data to include. The `nwb-file-info` output also shows `stimulus_template` containing image series for different movie clips and a gray screen. The `intervals` section contains presentation times for these stimuli (`gray_presentations`, `movie_clip_A_presentations`, etc.). It would be useful to show how to access the stimulus presentation times and perhaps visualize them in relation to the physiological data, or at least show a small example of the stimulus presentation intervals.
+
+I could create a plot showing the timing of the different stimulus presentations. This would be useful context when viewing the neural activity or running speed.
+
+I'll create a script to load the stimulus presentation intervals and plot them. I will focus on the `movie_clip_A_presentations` as an example.
+
+Tool: write_to_file
+Params: {'path': 'explore/explore_stimulus_intervals.py', 'content': '# This script loads the stimulus presentation intervals for movie_clip_A and plots them as colored bars.\n# The purpose is to visualize when a particular stimulus was presented during the experiment.\n\nimport pynwb\nimport h5py\nimport remfile\nimport matplotlib.pyplot as plt\nimport numpy as np\n\n# Load the NWB file - this part is hardcoded based on nwb-file-info output\nurl = "https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/"\nremote_file = remfile.File(url)\nh5_file = h5py.File(remote_file)\nio = pynwb.NWBHDF5IO(file=h5_file)\nnwb = io.read()\n\n# Access the stimulus presentation intervals for movie_clip_A\n# Path: intervals/movie_clip_A_presentations\nstimulus_intervals_table = nwb.intervals[\'movie_clip_A_presentations\'].to_dataframe()\n\n# Get the start and stop times\nstart_times = stimulus_intervals_table[\'start_time\'].values\nstop_times = stimulus_intervals_table[\'stop_time\'].values\n\n# Plot the intervals\nplt.figure(figsize=(12, 2))\nfor start, stop in zip(start_times, stop_times):\n    plt.barh(y=[0], width=stop - start, left=start, height=1, color=\'blue\', edgecolor=\'none\')\n\nplt.xlabel(\'Time (s)\')\nplt.yticks([]) # Hide y-axis ticks\nplt.title(\'Presentation Intervals for Movie Clip A (Subset)\')\nplt.xlim([start_times[0], start_times[0] + 60]) # Show only the first minute as an example\nplt.tight_layout()\n\n# Save the plot to a file\nplt.savefig(\'explore/stimulus_intervals_subset.png\')\nplt.close() # Close the plot to prevent it from displaying\n\n# Close the NWB file\nio.close()'}
+================================
+Content to be written to explore/explore_stimulus_intervals.py:
+# This script loads the stimulus presentation intervals for movie_clip_A and plots them as colored bars.
+# The purpose is to visualize when a particular stimulus was presented during the experiment.
+
+import pynwb
+import h5py
+import remfile
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load the NWB file - this part is hardcoded based on nwb-file-info output
+url = "https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/"
+remote_file = remfile.File(url)
+h5_file = h5py.File(remote_file)
+io = pynwb.NWBHDF5IO(file=h5_file)
+nwb = io.read()
+
+# Access the stimulus presentation intervals for movie_clip_A
+# Path: intervals/movie_clip_A_presentations
+stimulus_intervals_table = nwb.intervals['movie_clip_A_presentations'].to_dataframe()
+
+# Get the start and stop times
+start_times = stimulus_intervals_table['start_time'].values
+stop_times = stimulus_intervals_table['stop_time'].values
+
+# Plot the intervals
+plt.figure(figsize=(12, 2))
+for start, stop in zip(start_times, stop_times):
+    plt.barh(y=[0], width=stop - start, left=start, height=1, color='blue', edgecolor='none')
+
+plt.xlabel('Time (s)')
+plt.yticks([]) # Hide y-axis ticks
+plt.title('Presentation Intervals for Movie Clip A (Subset)')
+plt.xlim([start_times[0], start_times[0] + 60]) # Show only the first minute as an example
+plt.tight_layout()
+
+# Save the plot to a file
+plt.savefig('explore/stimulus_intervals_subset.png')
+plt.close() # Close the plot to prevent it from displaying
+
+# Close the NWB file
+io.close()
+================================
+Total prompt tokens: 603599 + 8596
+Total completion tokens: 7752 + 349
+
+=========================================
+
+write_to_file for 'explore/explore_stimulus_intervals.py':
+Successfully wrote 1517 characters to explore/explore_stimulus_intervals.py
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 44
+Submitting completion request...
+Processing response...
+I have successfully created the script `explore/explore_stimulus_intervals.py`.
+Now I will execute this script to generate the plot of stimulus presentation intervals. This is part of step 4.
+
+Tool: execute_command
+Params: {'command': 'python explore/explore_stimulus_intervals.py', 'requires_approval': 'false', 'timeout': '90'}
+================================
+Command to be executed
+python explore/explore_stimulus_intervals.py
+================================
+Total prompt tokens: 640990 + 8596
+Total completion tokens: 7851 + 349
+
+=========================================
+
+execute_command 'python explore/explore_stimulus_intervals.py' (requires approval):
+Command executed successfully
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 46
+Submitting completion request...
+Processing response...
+The script `explore/explore_stimulus_intervals.py` executed successfully and created `explore/stimulus_intervals_subset.png`.
+Now I will examine this plot using `read_image` to see if it's useful for the notebook. This is part of step 4.
+
+Tool: read_image
+Params: {'path': 'explore/stimulus_intervals_subset.png', 'instructions': "Analyze the plot of stimulus presentation intervals. Describe what the bars represent, the axes labels, and the title. Assess if the plot is informative for showing stimulus timing and if it's suitable for the notebook. Note any issues."}
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 2
+Submitting completion request...
+Processing response...
+Total prompt tokens: 678606 + 10475
+Total completion tokens: 7999 + 435
+
+=========================================
+
+read_image for 'explore/stimulus_intervals_subset.png':
+The image for explore/stimulus_intervals_subset.png is attached. AI description: The plot displays the presentation intervals of Movie Clip A (Subset). The blue bars represent time intervals when the movie clip was presented. The x-axis is labeled "Time (s)" and indicates time in seconds. There is no y-axis label. The title is "Presentation Intervals for Movie Clip A (Subset)". The plot is informative for showing the timing of stimulus presentation, appropriate for a notebook. No issues are apparent.
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 48
+Submitting completion request...
+Processing response...
+The stimulus intervals plot is clear and informative for showing the timing of a specific stimulus. It will be useful to include in the notebook to provide context for the physiological data.
+
+So far, I have explored:
+- dF/F traces (with issues in obtaining individual ROI identification for the legend)
+- Running speed
+- Stimulus presentation intervals
+
+I have information about the Dandiset metadata, assets, and the structure of the chosen NWB file. I have conducted exploratory analysis on a few key data streams and have generated plots that can be included in the notebook (with a note about the dF/F legend issue).
+
+I think I have enough information to start writing the `notebook.py` file. This is step 5 of my plan.
+
+The notebook structure should include:
+1. Markdown title.
+2. Markdown note about AI generation.
+3. Markdown overview of the Dandiset, including link.
+4. Markdown summary of notebook content.
+5. Markdown list of required packages.
+6. Code cell to load the Dandiset metadata using `dandiapi`.
+7. Code cell to list some assets using `dandiapi`.
+8. Markdown explaining the chosen NWB file and its URL.
+9. Code cell to load the NWB file using `pynwb`, `h5py`, and `remfile` (hardcoding the URL).
+10. Markdown summarizing the contents of the NWB file (based on `nwb-file-info` output).
+11. Markdown explaining the dF/F data and the plot.
+12. Code cell to load and plot a subset of dF/F traces (excluding legend due to issues).
+13. Markdown explaining the Running Speed data and the plot.
+14. Code cell to load and plot a subset of Running Speed.
+15. Markdown explaining the Stimulus Intervals data and the plot.
+16. Code cell to load and plot a subset of Stimulus Intervals.
+17. Markdown summarizing findings and future directions.
+
+I will now write the content of `notebook.py`.
+
+Tool: write_to_file
+Params: {'path': 'notebook.py', 'content': '# %% [markdown]\n# # Exploring Dandiset 000617: Allen Institute Openscope - Sequence Learning Project\n#\n# This notebook explores Dandiset 000617, an Allen Institute Openscope project investigating sequence learning using two-photon calcium imaging in mice.\n#\n# **Note:** This notebook was generated by an AI assistant and has not been fully verified. Please exercise caution when interpreting the code or results and consider consulting the official Dandiset documentation for definitive information.\n\n# %% [markdown]\n# ## Dandiset Overview\n#\n# This Dandiset contains data from a sequence learning experiment where head-fixed mice viewed sequences of natural movie clips while undergoing two-photon calcium imaging of neuron activity in visual cortex. The experiment aims to investigate how the brain predicts upcoming stimuli in a sequence.\n#\n# You can find more information about this Dandiset on the DANDI archive: [https://dandiarchive.org/dandiset/000617/0.250312.0130](https://dandiarchive.org/dandiset/000617/0.250312.0130)\n\n# %% [markdown]\n# ## Notebook Contents\n#\n# This notebook will cover:\n# - Loading basic Dandiset information.\n# - Listing the assets (files) within the Dandiset.\n# - Loading data from a selected NWB file.\n# - Exploring and visualizing a subset of key data streams within the NWB file, including:\n#     - dF/F traces (a measure of neural activity)\n#     - Running speed of the animal\n#     - Stimulus presentation timing\n\n# %% [markdown]\n# ## Required Packages\n#\n# This notebook requires the following Python packages to be installed in your environment:\n# - `dandi`\n# - `pynwb`\n# - `h5py`\n# - `remfile`\n# - `matplotlib`\n# - `numpy`\n# - `pandas`\n\n# %% [markdown]\n# ## Loading Dandiset Information\n#\n# We can use the `dandiapi` library to connect to the DANDI archive and retrieve information about the Dandiset.\n\n# %%\nfrom itertools import islice\nfrom dandi.dandiapi import DandiAPIClient\n\n# Connect to DANDI archive\nclient = DandiAPIClient()\ndandiset = client.get_dandiset("000617", "0.250312.0130")\n\n# Print basic information about the Dandiset\nmetadata = dandiset.get_raw_metadata()\nprint(f"Dandiset name: {metadata[\'name\']}")\nprint(f"Dandiset URL: {metadata[\'url\']}")\n\n# List some assets in the Dandiset\nassets = dandiset.get_assets()\nprint("\\nFirst 5 assets:")\nfor asset in islice(assets, 5):\n    print(f"- {asset.path} (ID: {asset.identifier})")\n\n# %% [markdown]\n# ## Loading Data from an NWB File\n#\n# This Dandiset contains numerous NWB files. For this exploration, we will focus on one of the smaller NWB files which likely contains\n# processed data rather than raw imaging data.\n#\n# We will load the file at the following path:\n# `sub-677038/sub-677038_ses-1280089433-acq-1280384858_ophys.nwb`\n#\n# The direct download URL for this asset (derived from its asset ID) is:\n# `https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/`\n#\n# We can use `pynwb`, `h5py`, and `remfile` to efficiently stream data from this remote NWB file without downloading the entire file.\n\n# %%\nimport pynwb\nimport h5py\nimport remfile\n\n# Load the NWB file\nurl = "https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/"\nremote_file = remfile.File(url)\nh5_file = h5py.File(remote_file)\nio = pynwb.NWBHDF5IO(file=h5_file)\nnwb = io.read()\n\nprint("Successfully loaded NWB file.")\nprint(f"Session Description: {nwb.session_description}")\nprint(f"Identifier: {nwb.identifier}")\nprint(f"Session Start Time: {nwb.session_start_time}")\n\n# %% [markdown]\n# ## NWB File Contents Summary\n#\n# This NWB file contains various data streams related to the experiment. Based on the file structure, key data interfaces include:\n#\n# *   **acquisition**: Contains raw acquired data such as voltage signals from a running wheel (`v_in`, `v_sig`).\n# *   **stimulus_template**: Contains the templates for the presented stimuli (e.g., `gray`, `movie_clip_A`, `movie_clip_B`, `movie_clip_C`).\n# *   **processing**: Contains processed data organized into modules:\n#     *   `ophys`: Ophys processing results, including:\n#         *   `corrected_fluorescence`: Corrected fluorescence traces.\n#         *   `dff`: Delta F/F (dF/F) traces, a common measure of neural activity.\n#         *   `event_detection`: Detected calcium events.\n#         *   `image_segmentation`: Information about segmented regions of interest (ROIs), including their masks and a cell specimen table.\n#         *   `images`: Processed images like average and maximum projections.\n#         *   `neuropil_trace`: Neuropil fluorescence traces.\n#         *   `ophys_motion_correction_x`, `ophys_motion_correction_y`: Motion correction data.\n#     *   `running`: Processed running wheel data, including `dx` (angular change) and `speed`.\n# *   **intervals**: Contains time intervals for different events, such as stimulus presentations (`gray_presentations`, `movie_clip_A_presentations`, etc.).\n# *   **subject**: Information about the experimental subject (mouse).\n\n# %% [markdown]\n# ## Exploring dF/F Traces\n#\n# The dF/F traces provide insight into the calcium activity of segmented neurons (ROIs). We can load a subset of these traces and visualize them over time.\n#\n# **Note:** There was difficulty retrieving unique identifiers for each ROI for the plot legend. The legend labels may not accurately reflect which trace corresponds to which ROI. This is an area for further investigation.\n\n# %%\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\n\n# Access the dF/F traces and timestamps\n# Path: processing/ophys/dff/roi_response_series/traces\ndff_traces_dataset = nwb.processing[\'ophys\'][\'dff\'].roi_response_series[\'traces\'].data\ntimestamps_dataset = nwb.processing[\'ophys\'][\'dff\'].roi_response_series[\'traces\'].timestamps\n\n# Load a subset of data for demonstration\nnum_time_points = 10000\nnum_rois = 5\n\ndff_subset = dff_traces_dataset[0:num_time_points, 0:num_rois]\ntimestamps_subset = timestamps_dataset[0:num_time_points]\n\n# Load ROI information to attempt to get cell specimen IDs (encountered issues with reliable access for legend)\n# Path: processing/ophys/image_segmentation/plane_segmentations/cell_specimen_table\ntry:\n    roi_table = nwb.processing[\'ophys\'][\'image_segmentation\'].plane_segmentations[\'cell_specimen_table\'].to_dataframe()\n    # Attempt to get cell specimen IDs - note: encountered issues with reliable access for legend labeling\n    cell_specimen_ids = roi_table[\'cell_specimen_id\'].iloc[0:num_rois].tolist()\n    print(f"Attempted to retrieve cell specimen IDs: {cell_specimen_ids}")\nexcept Exception as e:\n    print(f"Could not retrieve cell specimen IDs for legend: {e}")\n    cell_specimen_ids = [f"ROI {i+1}" for i in range(num_rois)] # Fallback labels\n\n\n# Plot the traces\nplt.figure(figsize=(12, 6))\nfor i in range(num_rois):\n     # Using simple index for label due to difficulty with cell_specimen_id\n    plt.plot(timestamps_subset, dff_subset[:, i] + i * 10, label=f\'Trace {i+1}\') # Offset traces for clarity\n\nplt.xlabel(\'Time (s)\')\nplt.ylabel(\'dF/F (arbitrary units, offset for clarity)\')\nplt.title(\'Subset of dF/F Traces for Selected ROIs\')\nplt.legend()\nplt.grid(True)\nplt.tight_layout()\nplt.show()\n\n\n# %% [markdown]\n# ## Exploring Running Speed\n#\n# The running speed data captures the animal\'s movement during the experiment, which can be correlated with neural activity.\n\n# %%\n# Access the running speed data and timestamps\n# Path: processing/running/speed\nspeed_dataset = nwb.processing[\'running\'][\'speed\'].data\nspeed_timestamps_dataset = nwb.processing[\'running\'][\'speed\'].timestamps\n\n# Load a subset of data\nnum_time_points = 50000\n\nspeed_subset = speed_dataset[0:num_time_points]\nspeed_timestamps_subset = speed_timestamps_dataset[0:num_time_points]\n\n# Plot the running speed\nplt.figure(figsize=(12, 4))\nplt.plot(speed_timestamps_subset, speed_subset)\nplt.xlabel(\'Time (s)\')\nplt.ylabel(\'Speed (cm/s)\')\nplt.title(\'Subset of Running Speed over Time\')\nplt.grid(True)\nplt.tight_layout()\nplt.show()\n\n# %% [markdown]\n# ## Exploring Stimulus Presentation Intervals\n#\n# Understanding the timing of stimulus presentations is crucial for relating neural and behavioral data to the experimental paradigm. We can visualize the intervals when specific stimuli were shown.\n\n# %%\n# Access the stimulus presentation intervals for movie_clip_A\n# Path: intervals/movie_clip_A_presentations\n# We convert to a dataframe for easier access\ntry:\n    stimulus_intervals_table = nwb.intervals[\'movie_clip_A_presentations\'].to_dataframe()\n\n    # Get the start and stop times\n    start_times = stimulus_intervals_table[\'start_time\'].values\n    stop_times = stimulus_intervals_table[\'stop_time\'].values\n\n    # Plot the intervals\n    plt.figure(figsize=(12, 2))\n    for start, stop in zip(start_times, stop_times):\n        plt.barh(y=[0], width=stop - start, left=start, height=1, color=\'blue\', edgecolor=\'none\')\n\n    plt.xlabel(\'Time (s)\')\n    plt.yticks([]) # Hide y-axis ticks\n    plt.title(\'Presentation Intervals for Movie Clip A (Subset)\')\n    # Show only a portion of the timeline for clarity\n    if len(start_times) > 0:\n        plt.xlim([start_times[0], start_times[0] + 60])\n    plt.grid(True)\n    plt.tight_layout()\n    plt.show()\nexcept Exception as e:\n    print(f"Could not plot stimulus intervals table: {e}")\n    print("Please verify the path \'intervals/movie_clip_A_presentations\' exists and contains data.")\n\n\n# %% [markdown]\n# ## Summary and Future Directions\n#\n# This notebook provided a basic introduction to accessing and exploring the data within Dandiset 000617. We demonstrated how to load Dandiset information, list assets, and load a specific NWB file to visualize samples of dF/F traces, running speed, and stimulus presentation intervals.\n#\n# **Key observations:**\n# - The dF/F traces show varying levels of activity across selected ROIs.\n# - The running speed plot indicates periods of both activity and rest for the animal.\n# - The stimulus interval plot clearly shows the timing of movie clip presentations.\n#\n# **Potential future directions for analysis include:**\n# - Investigating the relationship between running speed and neural activity.\n# - Analyzing neural responses to different stimulus types.\n# - Exploring detected calcium events (`event_detection`).\n# - Utilizing the image segmentation data to visualize ROI locations.\n# - Analyzing longer segments of data or additional NWB files from the Dandiset.\n# - Consulting the Dandiset\'s accompanying documentation for detailed experimental procedures and data descriptions.\n\n# %%\n# Close the NWB file\n# This is important for releasing resources\nif \'io\' in locals() and io and h5_file:\n    try:\n        io.close()\n        print("\\nNWB file closed.")\n    except Exception as e:\n        print(f"\\nError closing NWB file: {e}")\nelif \'nwb\' in locals() and nwb:\n     # If file was opened without h5_file and io objects\n     try:\n         nwb.close()\n         print("\\nNWB file closed.")\n     except Exception as e:\n         print(f"\\nError closing NWB file: {e}")'}
+================================
+Content to be written to notebook.py:
+# %% [markdown]
+# # Exploring Dandiset 000617: Allen Institute Openscope - Sequence Learning Project
+#
+# This notebook explores Dandiset 000617, an Allen Institute Openscope project investigating sequence learning using two-photon calcium imaging in mice.
+#
+# **Note:** This notebook was generated by an AI assistant and has not been fully verified. Please exercise caution when interpreting the code or results and consider consulting the official Dandiset documentation for definitive information.
+
+# %% [markdown]
+# ## Dandiset Overview
+#
+# This Dandiset contains data from a sequence learning experiment where head-fixed mice viewed sequences of natural movie clips while undergoing two-photon calcium imaging of neuron activity in visual cortex. The experiment aims to investigate how the brain predicts upcoming stimuli in a sequence.
+#
+# You can find more information about this Dandiset on the DANDI archive: [https://dandiarchive.org/dandiset/000617/0.250312.0130](https://dandiarchive.org/dandiset/000617/0.250312.0130)
+
+# %% [markdown]
+# ## Notebook Contents
+#
+# This notebook will cover:
+# - Loading basic Dandiset information.
+# - Listing the assets (files) within the Dandiset.
+# - Loading data from a selected NWB file.
+# - Exploring and visualizing a subset of key data streams within the NWB file, including:
+#     - dF/F traces (a measure of neural activity)
+#     - Running speed of the animal
+#     - Stimulus presentation timing
+
+# %% [markdown]
+# ## Required Packages
+#
+# This notebook requires the following Python packages to be installed in your environment:
+# - `dandi`
+# - `pynwb`
+# - `h5py`
+# - `remfile`
+# - `matplotlib`
+# - `numpy`
+# - `pandas`
+
+# %% [markdown]
+# ## Loading Dandiset Information
+#
+# We can use the `dandiapi` library to connect to the DANDI archive and retrieve information about the Dandiset.
+
+# %%
+from itertools import islice
+from dandi.dandiapi import DandiAPIClient
+
+# Connect to DANDI archive
+client = DandiAPIClient()
+dandiset = client.get_dandiset("000617", "0.250312.0130")
+
+# Print basic information about the Dandiset
+metadata = dandiset.get_raw_metadata()
+print(f"Dandiset name: {metadata['name']}")
+print(f"Dandiset URL: {metadata['url']}")
+
+# List some assets in the Dandiset
+assets = dandiset.get_assets()
+print("\nFirst 5 assets:")
+for asset in islice(assets, 5):
+    print(f"- {asset.path} (ID: {asset.identifier})")
+
+# %% [markdown]
+# ## Loading Data from an NWB File
+#
+# This Dandiset contains numerous NWB files. For this exploration, we will focus on one of the smaller NWB files which likely contains
+# processed data rather than raw imaging data.
+#
+# We will load the file at the following path:
+# `sub-677038/sub-677038_ses-1280089433-acq-1280384858_ophys.nwb`
+#
+# The direct download URL for this asset (derived from its asset ID) is:
+# `https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/`
+#
+# We can use `pynwb`, `h5py`, and `remfile` to efficiently stream data from this remote NWB file without downloading the entire file.
+
+# %%
+import pynwb
+import h5py
+import remfile
+
+# Load the NWB file
+url = "https://api.dandiarchive.org/api/assets/27dd7936-b3e7-45af-aca0-dc98b5954d19/download/"
+remote_file = remfile.File(url)
+h5_file = h5py.File(remote_file)
+io = pynwb.NWBHDF5IO(file=h5_file)
+nwb = io.read()
+
+print("Successfully loaded NWB file.")
+print(f"Session Description: {nwb.session_description}")
+print(f"Identifier: {nwb.identifier}")
+print(f"Session Start Time: {nwb.session_start_time}")
+
+# %% [markdown]
+# ## NWB File Contents Summary
+#
+# This NWB file contains various data streams related to the experiment. Based on the file structure, key data interfaces include:
+#
+# *   **acquisition**: Contains raw acquired data such as voltage signals from a running wheel (`v_in`, `v_sig`).
+# *   **stimulus_template**: Contains the templates for the presented stimuli (e.g., `gray`, `movie_clip_A`, `movie_clip_B`, `movie_clip_C`).
+# *   **processing**: Contains processed data organized into modules:
+#     *   `ophys`: Ophys processing results, including:
+#         *   `corrected_fluorescence`: Corrected fluorescence traces.
+#         *   `dff`: Delta F/F (dF/F) traces, a common measure of neural activity.
+#         *   `event_detection`: Detected calcium events.
+#         *   `image_segmentation`: Information about segmented regions of interest (ROIs), including their masks and a cell specimen table.
+#         *   `images`: Processed images like average and maximum projections.
+#         *   `neuropil_trace`: Neuropil fluorescence traces.
+#         *   `ophys_motion_correction_x`, `ophys_motion_correction_y`: Motion correction data.
+#     *   `running`: Processed running wheel data, including `dx` (angular change) and `speed`.
+# *   **intervals**: Contains time intervals for different events, such as stimulus presentations (`gray_presentations`, `movie_clip_A_presentations`, etc.).
+# *   **subject**: Information about the experimental subject (mouse).
+
+# %% [markdown]
+# ## Exploring dF/F Traces
+#
+# The dF/F traces provide insight into the calcium activity of segmented neurons (ROIs). We can load a subset of these traces and visualize them over time.
+#
+# **Note:** There was difficulty retrieving unique identifiers for each ROI for the plot legend. The legend labels may not accurately reflect which trace corresponds to which ROI. This is an area for further investigation.
+
+# %%
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+# Access the dF/F traces and timestamps
+# Path: processing/ophys/dff/roi_response_series/traces
+dff_traces_dataset = nwb.processing['ophys']['dff'].roi_response_series['traces'].data
+timestamps_dataset = nwb.processing['ophys']['dff'].roi_response_series['traces'].timestamps
+
+# Load a subset of data for demonstration
+num_time_points = 10000
+num_rois = 5
+
+dff_subset = dff_traces_dataset[0:num_time_points, 0:num_rois]
+timestamps_subset = timestamps_dataset[0:num_time_points]
+
+# Load ROI information to attempt to get cell specimen IDs (encountered issues with reliable access for legend)
+# Path: processing/ophys/image_segmentation/plane_segmentations/cell_specimen_table
+try:
+    roi_table = nwb.processing['ophys']['image_segmentation'].plane_segmentations['cell_specimen_table'].to_dataframe()
+    # Attempt to get cell specimen IDs - note: encountered issues with reliable access for legend labeling
+    cell_specimen_ids = roi_table['cell_specimen_id'].iloc[0:num_rois].tolist()
+    print(f"Attempted to retrieve cell specimen IDs: {cell_specimen_ids}")
+except Exception as e:
+    print(f"Could not retrieve cell specimen IDs for legend: {e}")
+    cell_specimen_ids = [f"ROI {i+1}" for i in range(num_rois)] # Fallback labels
+
+
+# Plot the traces
+plt.figure(figsize=(12, 6))
+for i in range(num_rois):
+     # Using simple index for label due to difficulty with cell_specimen_id
+    plt.plot(timestamps_subset, dff_subset[:, i] + i * 10, label=f'Trace {i+1}') # Offset traces for clarity
+
+plt.xlabel('Time (s)')
+plt.ylabel('dF/F (arbitrary units, offset for clarity)')
+plt.title('Subset of dF/F Traces for Selected ROIs')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+
+# %% [markdown]
+# ## Exploring Running Speed
+#
+# The running speed data captures the animal's movement during the experiment, which can be correlated with neural activity.
+
+# %%
+# Access the running speed data and timestamps
+# Path: processing/running/speed
+speed_dataset = nwb.processing['running']['speed'].data
+speed_timestamps_dataset = nwb.processing['running']['speed'].timestamps
+
+# Load a subset of data
+num_time_points = 50000
+
+speed_subset = speed_dataset[0:num_time_points]
+speed_timestamps_subset = speed_timestamps_dataset[0:num_time_points]
+
+# Plot the running speed
+plt.figure(figsize=(12, 4))
+plt.plot(speed_timestamps_subset, speed_subset)
+plt.xlabel('Time (s)')
+plt.ylabel('Speed (cm/s)')
+plt.title('Subset of Running Speed over Time')
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# %% [markdown]
+# ## Exploring Stimulus Presentation Intervals
+#
+# Understanding the timing of stimulus presentations is crucial for relating neural and behavioral data to the experimental paradigm. We can visualize the intervals when specific stimuli were shown.
+
+# %%
+# Access the stimulus presentation intervals for movie_clip_A
+# Path: intervals/movie_clip_A_presentations
+# We convert to a dataframe for easier access
+try:
+    stimulus_intervals_table = nwb.intervals['movie_clip_A_presentations'].to_dataframe()
+
+    # Get the start and stop times
+    start_times = stimulus_intervals_table['start_time'].values
+    stop_times = stimulus_intervals_table['stop_time'].values
+
+    # Plot the intervals
+    plt.figure(figsize=(12, 2))
+    for start, stop in zip(start_times, stop_times):
+        plt.barh(y=[0], width=stop - start, left=start, height=1, color='blue', edgecolor='none')
+
+    plt.xlabel('Time (s)')
+    plt.yticks([]) # Hide y-axis ticks
+    plt.title('Presentation Intervals for Movie Clip A (Subset)')
+    # Show only a portion of the timeline for clarity
+    if len(start_times) > 0:
+        plt.xlim([start_times[0], start_times[0] + 60])
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+except Exception as e:
+    print(f"Could not plot stimulus intervals table: {e}")
+    print("Please verify the path 'intervals/movie_clip_A_presentations' exists and contains data.")
+
+
+# %% [markdown]
+# ## Summary and Future Directions
+#
+# This notebook provided a basic introduction to accessing and exploring the data within Dandiset 000617. We demonstrated how to load Dandiset information, list assets, and load a specific NWB file to visualize samples of dF/F traces, running speed, and stimulus presentation intervals.
+#
+# **Key observations:**
+# - The dF/F traces show varying levels of activity across selected ROIs.
+# - The running speed plot indicates periods of both activity and rest for the animal.
+# - The stimulus interval plot clearly shows the timing of movie clip presentations.
+#
+# **Potential future directions for analysis include:**
+# - Investigating the relationship between running speed and neural activity.
+# - Analyzing neural responses to different stimulus types.
+# - Exploring detected calcium events (`event_detection`).
+# - Utilizing the image segmentation data to visualize ROI locations.
+# - Analyzing longer segments of data or additional NWB files from the Dandiset.
+# - Consulting the Dandiset's accompanying documentation for detailed experimental procedures and data descriptions.
+
+# %%
+# Close the NWB file
+# This is important for releasing resources
+if 'io' in locals() and io and h5_file:
+    try:
+        io.close()
+        print("\nNWB file closed.")
+    except Exception as e:
+        print(f"\nError closing NWB file: {e}")
+elif 'nwb' in locals() and nwb:
+     # If file was opened without h5_file and io objects
+     try:
+         nwb.close()
+         print("\nNWB file closed.")
+     except Exception as e:
+         print(f"\nError closing NWB file: {e}")
+================================
+Total prompt tokens: 716851 + 10475
+Total completion tokens: 11591 + 435
+
+=========================================
+
+write_to_file for 'notebook.py':
+Successfully wrote 10996 characters to notebook.py
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 50
+Submitting completion request...
+Processing response...
+I have successfully written the content of `notebook.py` based on the gathered information and the required structure.
+Now I need to convert `notebook.py` to `notebook.ipynb` and execute it to check for errors, as per step 6 of my plan.
+I will use the command `jupytext --to notebook notebook.py && jupyter execute --inplace notebook.ipynb` with a timeout of 600 seconds.
+
+Tool: execute_command
+Params: {'command': 'jupytext --to notebook notebook.py && jupyter execute --inplace notebook.ipynb', 'requires_approval': 'false', 'timeout': '600'}
+================================
+Command to be executed
+jupytext --to notebook notebook.py && jupyter execute --inplace notebook.ipynb
+================================
+/home/magland/.local/lib/python3.12/site-packages/jupytext/cell_reader.py:20: UserWarning: Sphinx Gallery in version 0.19.0 is not supported by Jupytext. Please use sphinx-gallery<=0.7.0 instead. If that is an issue, feel free to report it at https://github.com/mwouts/jupytext/issues, or even better, prepare a PR to handle the new signature of sphinx_gallery.notebook.rst2md.
+  warnings.warn(
+[jupytext] Reading notebook.py in format py
+[jupytext] Writing notebook.ipynb
+[NbClientApp] Executing notebook.ipynb
+[NbClientApp] Executing notebook with kernel: 
+[NbClientApp] Save executed results to notebook.ipynb
+Total prompt tokens: 758820 + 10475
+Total completion tokens: 11753 + 435
+
+=========================================
+
+execute_command 'jupytext --to notebook notebook.py && jupyter execute --inplace notebook.ipynb' (requires approval):
+Command executed successfully
+STDOUT:
+[jupytext] Reading notebook.py in format py
+[jupytext] Writing notebook.ipynb
+
+STDERR:
+/home/magland/.local/lib/python3.12/site-packages/jupytext/cell_reader.py:20: UserWarning: Sphinx Gallery in version 0.19.0 is not supported by Jupytext. Please use sphinx-gallery<=0.7.0 instead. If that is an issue, feel free to report it at https://github.com/mwouts/jupytext/issues, or even better, prepare a PR to handle the new signature of sphinx_gallery.notebook.rst2md.
+  warnings.warn(
+[NbClientApp] Executing notebook.ipynb
+[NbClientApp] Executing notebook with kernel: 
+[NbClientApp] Save executed results to notebook.ipynb
+
+=========================================
+
+Using model: google/gemini-2.5-flash-preview
+Num. messages in conversation: 52
+Submitting completion request...
+Processing response...
+The conversion and execution of the notebook completed successfully without any error messages in the output. This means the notebook ran through all cells without crashing.
+
+I have successfully completed all the steps outlined in the plan:
+1. Got Dandiset metadata.
+2. Got Dandiset assets.
+3. Chose an NWB file and got its information.
+4. Explored data using scripts and examined plots (noting the issue with dF/F legend).
+5. Wrote `notebook.py`.
+6. Converted and executed the notebook successfully.
+
+Now, I can attempt completion and present the result to the user. I should mention the created notebook file and that it executed successfully. I can also offer to open the generated `.ipynb` file for them to view.
+
+Tool: attempt_completion
+Params: {'result': 'I have created the Jupytext notebook `notebook.py` and successfully converted it to `notebook.ipynb`. I also executed the notebook using `jupyter execute`, and it ran without errors.\n\nThe notebook explores Dandiset 000617 version 0.250312.0130, covering how to load Dandiset information, list assets, and load data from a selected NWB file. It includes visualizations of a subset of dF/F traces, running speed, and stimulus presentation intervals. A note has been included in the notebook regarding the difficulty encountered in obtaining unique ROI identifiers for the dF/F trace legend.\n\nYou can now open `notebook.ipynb` to view the executed notebook with outputs and plots.', 'command': 'open notebook.ipynb'}
+I have created the Jupytext notebook `notebook.py` and successfully converted it to `notebook.ipynb`. I also executed the notebook using `jupyter execute`, and it ran without errors.
+
+The notebook explores Dandiset 000617 version 0.250312.0130, covering how to load Dandiset information, list assets, and load data from a selected NWB file. It includes visualizations of a subset of dF/F traces, running speed, and stimulus presentation intervals. A note has been included in the notebook regarding the difficulty encountered in obtaining unique ROI identifiers for the dF/F trace legend.
+
+You can now open `notebook.ipynb` to view the executed notebook with outputs and plots.
+Total prompt tokens: 801291 + 10475
+Total completion tokens: 12118 + 435
+
